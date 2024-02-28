@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "lib": ["ES2022", "DOM", "DOM.Iterable", "Decorators"],
+        "module": "esnext",
+        "moduleResolution": "Bundler",
+        "outDir": "./dist",
+        "rootDir": ".",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "importHelpers": true,
+        "noEmitHelpers": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "jsx": "react",
+        "paths": {
+            "_api/*": ["./src/api/*"],
+            "_components/*": ["./src/components/*"],
+            "_intl": ["./src/intl/index.ts"],
+            "_page/*": ["./src/page/*"],
+            "_hooks/*": ["./src/hooks/*"],
+            "_shell/*": ["./src/shell/*"],
+            "_state/*": ["./src/state/*"],
+            "_routes": ["./src/routes.ts"],
+            "_theme": ["./src/theme.tsx"],
+            "_eventBus": ["./src/eventBus.ts"],
+        }
+    },
+    "include": [
+        "src/**/*",
+        "__tests__/**/*",
+        "typings/**/*",
+        "spec.config.ts",
+    ]
+}

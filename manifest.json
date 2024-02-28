@@ -1,0 +1,10 @@
+{
+  "name": "Comfyrmant",
+  "short_name": "Comfyrmant",
+  "theme_color": "#1e90ff",
+  "background_color": "#2196f3",
+  "display": "standalone",
+  "orientation": "landscape",
+  "scope": "/",
+  "start_url": "/"
+}
