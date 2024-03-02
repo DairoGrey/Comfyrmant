@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import React from 'react';
 
 import * as uuid from 'uuid';
@@ -12,19 +12,30 @@ import { PinsView } from './PinsView';
 type Props = {
   nodeType: NodeType;
 
-  onClick?: React.MouseEventHandler;
-  onDragStart?: React.DragEventHandler;
-  onDragEnd?: React.DragEventHandler;
+  onClick?: (e: React.MouseEvent, type: string) => void;
+  onDragStart?: (e: React.DragEvent, type: string) => void;
 };
 
-export const NodeView: FC<Props> = ({ nodeType, ...props }) => {
-  const { title, inputs, outputs } = nodeType;
+export const NodeView: FC<Props> = ({ nodeType, onClick, onDragStart }) => {
+  const { type, title, inputs, outputs } = nodeType;
 
   const hasPins = Object.values(inputs).length > 0 || Object.keys(outputs).length > 0;
 
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      onClick?.(e, type);
+    },
+    [type, onClick],
+  );
+  const handleDragStart = useCallback(
+    (e: React.DragEvent) => {
+      onDragStart?.(e, type);
+    },
+    [type, onDragStart],
+  );
+
   return (
     <Stack
-      {...props}
       component={Paper}
       elevation={3}
       height="min-content"
@@ -32,6 +43,8 @@ export const NodeView: FC<Props> = ({ nodeType, ...props }) => {
       direction="column"
       flex={1}
       draggable
+      onClick={handleClick}
+      onDragStart={handleDragStart}
       sx={{ userSelect: 'none' }}
     >
       <Stack position="relative">

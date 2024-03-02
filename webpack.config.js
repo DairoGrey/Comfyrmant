@@ -19,7 +19,8 @@ const getEnv = (isProduction) => {
   dotenv.config({ path: path.resolve(__dirname, `.env${DOTENV_SUFFIX}`), processEnv });
 
   const env = cleanEnv(processEnv, {
-    LOGLEVER: str({ default: 'full' })
+    LOGLEVER: str({ default: 'full' }),
+    CHANGES: str({ default: 'off' })
   });
 
   return env;

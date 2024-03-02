@@ -5,6 +5,10 @@ import type { WorkflowState } from '../slice';
 
 export const updateChangesStack =
   (state: Draft<WorkflowState>, type: 'edges' | 'nodes') => (apply: Patch[], rollback: Patch[]) => {
+    if (process.env.CHANGES === 'off') {
+      return;
+    }
+
     const changes = { [type]: { apply, rollback } };
 
     if (state.changes.index === state.changes.stack.length - 1) {
