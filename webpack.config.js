@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-const { cleanEnv, url } = require('envalid');
+const { cleanEnv, str } = require('envalid');
 
 const path = require('path');
 const webpack = require('webpack');
@@ -19,8 +19,7 @@ const getEnv = (isProduction) => {
   dotenv.config({ path: path.resolve(__dirname, `.env${DOTENV_SUFFIX}`), processEnv });
 
   const env = cleanEnv(processEnv, {
-    API_URL: url({ default: 'http://192.168.56.1:8188', desc: 'Base url for API' }),
-    WS_URL: url({ default: 'ws://192.168.56.1:8188', desc: 'Base url for WS' }),
+    LOGLEVER: str({ default: 'full' })
   });
 
   return env;

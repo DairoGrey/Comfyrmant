@@ -1,27 +1,21 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { BaseEdge, EdgeProps, getBezierPath, getSmoothStepPath, getStraightPath } from 'reactflow';
+import { BaseEdge, EdgeProps } from 'reactflow';
 
 import * as settingsSel from '_state/features/settings/selector';
-import { WorkflowEdgeType } from '_state/features/settings/types';
 import * as workflowSel from '_state/features/workflow/selector';
 import { RootState } from '_state/store';
 import { useColorMode } from '_theme';
 
 import { colorByType } from '../utils/colorByType';
+import { EDGE_TYPE } from '../utils/edgeTypes';
 
-const EDGE_TYPE: Record<WorkflowEdgeType, typeof getBezierPath | typeof getSmoothStepPath | typeof getStraightPath> = {
-  [WorkflowEdgeType.Curve]: getBezierPath,
-  [WorkflowEdgeType.SmoothStep]: getSmoothStepPath,
-  [WorkflowEdgeType.Straight]: getStraightPath,
-};
-
-export const ColoredEdge: FC<EdgeProps> = ({ id, ...props }) => {
+export const ColoredEdge: FC<EdgeProps> = ({ id, selected, ...props }) => {
   const colorMode = useColorMode();
 
   const edgeType = useSelector(settingsSel.getWorkflowEdgeType);
 
-  const [edgePath] = EDGE_TYPE[edgeType](props);
+  const [path] = EDGE_TYPE[edgeType](props);
 
   const sourceHandleId: string | undefined = props.sourceHandleId || undefined;
   const source = props.source;
@@ -34,9 +28,11 @@ export const ColoredEdge: FC<EdgeProps> = ({ id, ...props }) => {
   const output = useSelector(getOutput);
   const color = output ? colorByType(output.type, colorMode) : undefined;
 
+  const style = useMemo(() => ({ stroke: color, strokeWidth: selected ? 3 : 2 }), [selected]);
+
   return (
     <>
-      <BaseEdge id={id} path={edgePath} style={{ stroke: color, strokeWidth: props.selected ? 3 : 2 }} />
+      <BaseEdge id={id} path={path} style={style} />
     </>
   );
 };

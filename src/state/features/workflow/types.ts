@@ -2,17 +2,25 @@ import type { NodeErrorType } from '../api/types';
 export { NodeErrorType } from '../api/types';
 
 export enum NodeColor {
-  Green = 'green',
+  Amber = 'amber',
   Blue = 'blue',
-  Orange = 'orange',
-  Purple = 'purple',
-  Yellow = 'yellow',
-  DeepPurple = 'deepPurple',
-  Indigo = 'indigo',
-  Brown = 'brown',
-  Pink = 'pink',
-  Teal = 'teal',
   BlueGrey = 'blueGrey',
+  Brown = 'brown',
+  Cyan = 'cyan',
+  DeepOrange = 'deepOrange',
+  DeepPurple = 'deepPurple',
+  Green = 'green',
+  Grey = 'grey',
+  Indigo = 'indigo',
+  LightBlue = 'lightBlue',
+  LightGreen = 'lightGreen',
+  Lime = 'lime',
+  Orange = 'orange',
+  Pink = 'pink',
+  Purple = 'purple',
+  Red = 'red',
+  Teal = 'teal',
+  Yellow = 'yellow',
 }
 
 export type NodeInput = {
@@ -45,10 +53,12 @@ export type NodeTypes = {
 
 export type NodeInputState = NodeInput & {
   hidden?: boolean;
+  connected?: boolean;
 };
 
 export type NodeOutputState = NodeOutput & {
   hidden?: boolean;
+  connected?: boolean;
 };
 
 export type NodeWidgetState = {
@@ -75,5 +85,7 @@ export type NodeStateData = {
   values?: Record<string, unknown>;
   errors?: Record<string, NodeErrorState>;
   color?: NodeColor;
+  resizing?: boolean;
+  collapsed?: boolean;
   tags?: string[];
 };

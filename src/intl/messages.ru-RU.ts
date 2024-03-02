@@ -3,10 +3,23 @@ export const ru_RU: Record<string, string> = {
   'ui.app-bar.toolbar.color-mode-switch.mode.light': 'светлый',
   'ui.app-bar.toolbar.color-mode-switch.tooltip': 'Переключить в {mode}',
 
-  'ui.node.context-menu.convert-input-to-widget': 'Заменить <b>{input}</b> на поле',
-  'ui.node.context-menu.convert-widget-to-input': 'Заменить <b>{widget}</b> на пин',
+  'ui.app-bar.widgets.workflow.button.export-to-file': 'Сохранить в файл',
+  'ui.app-bar.widgets.workflow.button.import-from-file': 'Загрузить из файла',
+  'ui.app-bar.widgets.workflow.button.queue-prompt': 'Добавить в очередь',
+  'ui.app-bar.widgets.workflow.button.redo': 'Повторить',
+  'ui.app-bar.widgets.workflow.button.undo': 'Отменить',
+  'ui.app-bar.widgets.workflow.status-block.executed-prompts': 'Выполнено запросов',
+  'ui.app-bar.widgets.workflow.status-block.remaining-queue': 'Очередь запросов',
+
+  'ui.node.context-menu.change-color': 'Изменить цвет',
+  'ui.node.context-menu.change-color.item.reset-color': 'Сбросить цвет',
+  'ui.node.context-menu.convert-input-to-widget': 'Заменить на поле',
+  'ui.node.context-menu.convert-input-to-widget.item': '<colored>{input}</colored>',
+  'ui.node.context-menu.convert-widget-to-input': 'Заменить на пин',
+  'ui.node.context-menu.convert-widget-to-input.item': '<colored>{widget}</colored>',
   'ui.node.context-menu.disconnect-all': 'Отключить все',
 
+  'ui.quick-actions.reset-all-colors.tooltip': 'Сбросить все цвета',
   'ui.quick-actions.resize-to-snap-grip.tooltip': 'Выравнить по сетке',
   'ui.quick-actions.select-all.tooltip': 'Выбрать все',
 

@@ -6,6 +6,12 @@ export type QueueItem = [
   string[], // output nodes
 ];
 
+export type ImageOutputResponse = {
+  filename: string;
+  type: 'temp' | 'output';
+  subfolder: string;
+};
+
 export type QueueResponse = {
   queue_running: QueueItem[];
   queue_pending: QueueItem[];

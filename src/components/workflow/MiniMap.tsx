@@ -1,6 +1,6 @@
 import { MiniMap as _MiniMap, MiniMapProps } from 'reactflow';
 
-import { styled } from '@mui/material';
+import { alpha, styled } from '@mui/material';
 import { grey } from '@mui/material/colors';
 
 type Props = {
@@ -11,18 +11,17 @@ type Props = {
 
 const STYLES: Record<'dark' | 'light', Partial<Props>> = {
   dark: {
-    minimap: grey[900],
-    node: grey[500],
-    mask: grey[700],
+    mask: alpha(grey[900], 0.8),
   },
   light: {},
 };
 
 export const MiniMap = styled(_MiniMap)<MiniMapProps>(({ theme }) => ({
   '&.react-flow__minimap': {
-    backgroundColor: STYLES[theme.palette.mode].minimap,
-    '& .react-flow__minimap-node': {
-      fill: STYLES[theme.palette.mode].node,
+    backgroundColor: theme.palette.background.paper,
+    '& > svg': {
+      borderRadius: theme.shape.borderRadius,
+      border: `1px solid ${theme.palette.divider}`,
     },
     '& .react-flow__minimap-mask': {
       fill: STYLES[theme.palette.mode].mask,

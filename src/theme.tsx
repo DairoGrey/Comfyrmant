@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import type {} from '@mui/lab/themeAugmentation';
 
 import { useMediaQuery } from '@mui/material';
+import { enUS, ruRU } from '@mui/material/locale';
 import * as styles from '@mui/material/styles';
 import createPalette, { PaletteAugmentColorOptions } from '@mui/material/styles/createPalette';
 
 import * as settingsSel from '_state/features/settings/selector';
 import * as settingsAct from '_state/features/settings/slice';
+import { Locale } from '_state/features/settings/types';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -21,6 +23,11 @@ export enum ColorMode {
   Light = 'light',
 }
 
+const LOCALE: Record<Locale, any> = {
+  [Locale.EN_US]: enUS,
+  [Locale.RU_RU]: ruRU,
+};
+
 const PRIMARY_COLOR: PaletteAugmentColorOptions = {
   color: { main: '#66B3FF' },
   name: 'argentinian blue',
@@ -31,7 +38,7 @@ const SECONDARY_COLOR: PaletteAugmentColorOptions = {
   name: 'samdy brown',
 };
 
-export const createTheme = (mode: ColorMode) => {
+export const createTheme = (mode: ColorMode, locale: Locale) => {
   const palette = createPalette({
     contrastThreshold: 7.0,
     mode,
@@ -42,18 +49,21 @@ export const createTheme = (mode: ColorMode) => {
   const primary = palette.augmentColor(PRIMARY_COLOR);
   const secondary = palette.augmentColor(SECONDARY_COLOR);
 
-  return styles.createTheme({
-    palette: {
-      contrastThreshold: 7.0,
-      mode,
-      primary: {
-        main: primary[prop],
-      },
-      secondary: {
-        main: secondary[prop],
+  return styles.createTheme(
+    {
+      palette: {
+        contrastThreshold: 7.0,
+        mode,
+        primary: {
+          main: primary[prop],
+        },
+        secondary: {
+          main: secondary[prop],
+        },
       },
     },
-  });
+    LOCALE[locale],
+  );
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

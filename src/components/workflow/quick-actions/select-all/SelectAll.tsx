@@ -1,22 +1,16 @@
 import React, { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
-import { NodeChange, NodeSelectionChange, useNodes } from 'reactflow';
+import { useDispatch } from 'react-redux';
 
 import { IconButton, Tooltip } from '@mui/material';
 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
-import * as settingsSel from '_state/features/settings/selector';
 import * as workflowAct from '_state/features/workflow/slice';
 import type { AppDispatch } from '_state/store';
 
 export const SelectAll = () => {
-  const nodes = useNodes();
-
   const dispatch: AppDispatch = useDispatch();
-
-  const workflowSnapGrid = useSelector(settingsSel.getWorkflowSnapGrid);
 
   const tooltip = (
     <FormattedMessage
@@ -27,19 +21,8 @@ export const SelectAll = () => {
   );
 
   const handleClick = useCallback(() => {
-    const changes: NodeChange[] = nodes
-      .filter((node) => node.width && node.height)
-      .map(
-        (node) =>
-          ({
-            id: node.id,
-            type: 'select',
-            selected: true,
-          }) satisfies NodeSelectionChange,
-      );
-
-    dispatch(workflowAct.applyNodeChanges(changes));
-  }, [nodes, workflowSnapGrid]);
+    dispatch(workflowAct.selectAll());
+  }, []);
 
   return (
     <Tooltip title={tooltip}>

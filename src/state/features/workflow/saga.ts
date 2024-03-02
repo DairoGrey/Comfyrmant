@@ -1,13 +1,68 @@
+import { Node, NodeChange, NodeDimensionChange, NodePositionChange, NodeSelectionChange } from 'reactflow';
+
 import { all, put, select, takeEvery } from 'redux-saga/effects';
 
-import * as apiQueries from '_state/features/api/slice';
+import { default as apiQueries } from '_state/features/api/slice';
 import { PromptErrorResponse, PromptRequest, PromptResponse } from '_state/features/api/types';
 import * as hubAct from '_state/features/hub/slice';
 import * as notificationsAct from '_state/features/notifications/slice';
 import { Severity } from '_state/features/notifications/types';
+import * as settingsSel from '_state/features/settings/selector';
 
 import * as workflowSel from './selector';
 import * as workflowAct from './slice';
+import { NodeStateData } from './types';
+
+const alignSizeToUp = (value: number, alignment: number) => alignment * Math.ceil(Math.abs(value / alignment));
+const alignPositionToUp = (value: number, alignment: number) => alignment * Math.ceil(value / alignment);
+
+function* resizeToSnapGridFlow() {
+  const snapGrid: number = yield select(settingsSel.getWorkflowSnapGrid);
+  const nodes: Node<NodeStateData>[] = yield select(workflowSel.getNodes);
+
+  const changes: NodeChange[] = nodes
+    .filter((node) => node.width && node.height)
+    .flatMap((node) => [
+      {
+        id: node.id,
+        type: 'dimensions',
+        dimensions: {
+          width: alignSizeToUp(node.width!, snapGrid),
+          height: alignSizeToUp(node.height!, snapGrid),
+        },
+        resizing: true,
+        updateStyle: true,
+      } satisfies NodeDimensionChange,
+      {
+        id: node.id,
+        type: 'position',
+        position: {
+          x: alignPositionToUp(node.position.x!, snapGrid),
+          y: alignPositionToUp(node.position.y!, snapGrid),
+        },
+        dragging: false,
+      } satisfies NodePositionChange,
+    ]);
+
+  yield put(workflowAct.applyNodeChanges(changes));
+}
+
+function* selectAllFlow() {
+  const nodes: Node<NodeStateData>[] = yield select(workflowSel.getNodes);
+
+  const changes: NodeChange[] = nodes
+    .filter((node) => node.width && node.height)
+    .map(
+      (node) =>
+        ({
+          id: node.id,
+          type: 'select',
+          selected: true,
+        }) satisfies NodeSelectionChange,
+    );
+
+  yield put(workflowAct.applyNodeChanges(changes));
+}
 
 function* randomTickFlow() {
   const nodes: [string, string][] = yield select(workflowSel.getNodesWithRandomWidgets);
@@ -29,7 +84,7 @@ function* queuePromptFlow() {
     yield put(workflowAct.randomTick());
     const prompt: PromptRequest = yield select(workflowSel.getPrompt);
     const request: Promise<{ data?: PromptResponse; error?: PromptErrorResponse }> = yield put(
-      apiQueries.default.endpoints.queuePrompt.initiate(prompt),
+      apiQueries.endpoints.queuePrompt.initiate(prompt),
     );
 
     const { data, error }: { data?: PromptResponse; error?: PromptErrorResponse } = yield request;
@@ -57,7 +112,16 @@ function* queuePromptFlow() {
   }
 }
 
+function* exportToFileFlow() {}
+
+function importFromFileFlow() {}
+
 export function* workflowSaga() {
   yield takeEvery(workflowAct.randomTick.type, randomTickFlow);
   yield takeEvery(workflowAct.queuePrompt.type, queuePromptFlow);
+  yield takeEvery(workflowAct.selectAll.type, selectAllFlow);
+  yield takeEvery(workflowAct.resizeToSnapGrid.type, resizeToSnapGridFlow);
+
+  yield takeEvery(workflowAct.exportToFile.type, exportToFileFlow);
+  yield takeEvery(workflowAct.importFromFile.type, importFromFileFlow);
 }

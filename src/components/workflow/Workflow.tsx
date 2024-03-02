@@ -4,14 +4,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactFlow, {
   Background,
   BackgroundVariant,
+  Edge,
+  HandleType,
   IsValidConnection,
+  Node,
   OnConnect,
   OnEdgesChange,
   OnEdgeUpdateFunc,
   OnNodesChange,
+  useReactFlow,
 } from 'reactflow';
 
 import isEqual from 'lodash/isEqual';
+import * as uuid from 'uuid';
 
 import { useTheme } from '@mui/material';
 
@@ -20,15 +25,22 @@ import * as settingsSel from '_state/features/settings/selector';
 import { WorkflowBackground } from '_state/features/settings/types';
 import * as workflowSel from '_state/features/workflow/selector';
 import * as workflowAct from '_state/features/workflow/slice';
+import { NodeStateData } from '_state/features/workflow/types';
 import type { AppDispatch } from '_state/store';
+import { useColorMode } from '_theme';
 
 import { ApiNode } from './nodes/ApiNode';
+import { createMiniMapNodeColorGetter } from './utils/backgroundColor';
+import { ConnectionLine } from './ConnectionLine';
 import { ContextMenu } from './ContextMenu';
 import { Controls } from './Controls';
 import { builtinEdgeTypes } from './edges';
 import { MiniMap } from './MiniMap';
 import { builtinNodeTypes } from './nodes';
-import { QuickActions } from './QuickActions';
+import { QuickActions } from './quick-actions';
+
+type OnEdgeUpdateStartFunc = (e: React.MouseEvent, edge: Edge<any>, handleType: HandleType) => void;
+type OnEdgeUpdateEndFunc = (e: MouseEvent | TouchEvent, edge: Edge<any>, handleType: HandleType) => void;
 
 const toBackgroundVariant = (workflowGrid: WorkflowBackground) => {
   return workflowGrid as unknown as BackgroundVariant;
@@ -36,6 +48,9 @@ const toBackgroundVariant = (workflowGrid: WorkflowBackground) => {
 
 export const Workflow = () => {
   const theme = useTheme();
+  const colorMode = useColorMode();
+
+  const flow = useReactFlow();
 
   const nodes = useSelector(workflowSel.getNodes);
   const edges = useSelector(workflowSel.getEdges);
@@ -49,7 +64,12 @@ export const Workflow = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<any>(null);
 
-  const flowRef = useRef<HTMLDivElement>(null);
+  const edgeUpdateSuccessful = useRef(false);
+
+  const getNodeColor = useMemo(
+    () => createMiniMapNodeColorGetter(colorMode, theme.palette.divider),
+    [colorMode, theme],
+  );
 
   const { data } = apiQueries.useGetObjectInfoQuery();
 
@@ -67,6 +87,66 @@ export const Workflow = () => {
     );
   }, [data]);
 
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, [setIsOpen]);
+
+  const handleNodeColor = useCallback((node: Node<NodeStateData>) => getNodeColor(node.data.color), [getNodeColor]);
+
+  const handleDragOver: React.DragEventHandler = useCallback((e) => {
+    if (e.dataTransfer.types.includes('application/node')) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+  }, []);
+
+  const handleDrop: React.DragEventHandler = useCallback(
+    (e) => {
+      if (!data) {
+        return;
+      }
+
+      e.preventDefault();
+
+      const type = e.dataTransfer.getData('application/node');
+
+      // check if the dropped element is valid
+      if (typeof type === 'undefined' || !type) {
+        return;
+      }
+
+      // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
+      // and you don't need to subtract the reactFlowBounds.left/top anymore
+      // details: https://reactflow.dev/whats-new/2023-11-10
+      const position = flow.screenToFlowPosition({
+        x: e.clientX,
+        y: e.clientY,
+      });
+
+      const nodeType = data[type];
+
+      if (!nodeType) {
+        return;
+      }
+
+      const newNode = {
+        id: uuid.v4(),
+        type: nodeType.type,
+        position,
+        data: {
+          nodeType: { ...nodeType },
+          inputs: { ...nodeType.inputs },
+          outputs: { ...nodeType.outputs },
+          widgets: {},
+          values: {},
+        },
+      };
+
+      dispatch(workflowAct.applyNodeChanges([{ type: 'add', item: newNode }]));
+    },
+    [data, flow],
+  );
+
   const handleNodesChange: OnNodesChange = useCallback(
     (changes) => dispatch(workflowAct.applyNodeChanges(changes)),
     [],
@@ -77,10 +157,22 @@ export const Workflow = () => {
     [],
   );
 
-  const handleEdgeUpdate: OnEdgeUpdateFunc = useCallback(
-    (edge, connection) => dispatch(workflowAct.updateEdge({ edge, connection })),
-    [],
-  );
+  const handleEdgeUpdateStart: OnEdgeUpdateStartFunc = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const handleEdgeUpdate: OnEdgeUpdateFunc = useCallback((edge, connection) => {
+    edgeUpdateSuccessful.current = true;
+    dispatch(workflowAct.updateEdge({ edge, connection }));
+  }, []);
+
+  const handleEdgeUpdateEnd: OnEdgeUpdateEndFunc = useCallback((e, edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      dispatch(workflowAct.applyEdgeChanges([{ type: 'remove', id: edge.id }]));
+    }
+
+    edgeUpdateSuccessful.current = true;
+  }, []);
 
   const handleConnect: OnConnect = useCallback((connection) => dispatch(workflowAct.addEdge(connection)), []);
 
@@ -100,6 +192,14 @@ export const Workflow = () => {
 
   const isValidConnection: IsValidConnection = useCallback(
     (connection) => {
+      if (!connection.source && !connection.target) {
+        return false;
+      }
+
+      if (connection.source === connection.target) {
+        return false;
+      }
+
       const sourceNode = nodes.find((node) => node.id === connection.source);
       const targetNode = nodes.find((node) => node.id === connection.target);
 
@@ -112,26 +212,30 @@ export const Workflow = () => {
 
       return false;
     },
-    [nodes],
+    [nodes, edges],
   );
 
   return (
     <>
       <ReactFlow
-        ref={flowRef}
         nodes={nodes}
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
         onConnect={handleConnect}
+        onEdgeUpdateStart={handleEdgeUpdateStart}
+        onEdgeUpdateEnd={handleEdgeUpdateEnd}
         onPaneContextMenu={handleContextMenu}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         isValidConnection={isValidConnection}
         nodeTypes={nodeTypes}
         edgeTypes={builtinEdgeTypes}
         fitView
         snapToGrid={snapToGrid}
         snapGrid={[snapGrid, snapGrid]}
+        connectionLineComponent={ConnectionLine}
       >
         <Background
           gap={[snapGrid, snapGrid]}
@@ -141,11 +245,11 @@ export const Workflow = () => {
           size={background === WorkflowBackground.Dots ? 2 : snapGrid / 3}
           lineWidth={1}
         />
-        <MiniMap />
+        <MiniMap nodeColor={handleNodeColor} />
         <Controls />
         <QuickActions />
       </ReactFlow>
-      <ContextMenu isOpen={isOpen} position={position} onClose={() => setIsOpen(false)} />
+      <ContextMenu isOpen={isOpen} position={position} onClose={handleClose} />
     </>
   );
 };

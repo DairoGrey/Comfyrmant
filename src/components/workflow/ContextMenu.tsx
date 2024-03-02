@@ -1,16 +1,29 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { FC } from 'react';
 import { useReactFlow } from 'reactflow';
 
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import pickBy from 'lodash/pickBy';
 import set from 'lodash/set';
-import { v4 as uuid } from 'uuid';
+import * as uuid from 'uuid';
 
-import { Box, Grid, IconButton, ListItemButton, Stack, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  ClickAwayListener,
+  createFilterOptions,
+  Drawer,
+  Grid,
+  IconButton,
+  ListItemButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Collapse from '@mui/material/Collapse';
-import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -19,11 +32,11 @@ import ListItemText from '@mui/material/ListItemText';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import * as apiHooks from '_state/features/api/slice';
 import { NodeStateData, NodeType } from '_state/features/workflow/types';
 
+import { NodeView } from './node';
 import { builtinNodes } from './nodes';
 
 type TreeNode<T> = {
@@ -38,44 +51,44 @@ type Tree<T> = {
   [k: string]: TreeNode<T>;
 };
 
-type ItemProps = {
-  node: NodeType;
+type NodeItemProps = {
+  nodeType: NodeType;
   position: any;
   onClose: () => void;
 };
 
-const Item: FC<ItemProps> = ({ node, position, onClose }) => {
+const NodeItem: FC<NodeItemProps> = ({ nodeType, position, onClose }) => {
   const flow = useReactFlow<NodeStateData>();
 
-  return (
-    <ListItem
-      onClick={() => {
-        flow.addNodes({
-          id: uuid(),
-          data: {
-            nodeType: { ...node },
-            inputs: { ...node.inputs },
-            outputs: { ...node.outputs },
-            widgets: {},
-            values: {},
-          },
-          type: node.type,
-          position: flow.screenToFlowPosition(position),
-        });
+  const handleItemClick = useCallback(() => {
+    flow.addNodes({
+      id: uuid.v4(),
+      data: {
+        nodeType: { ...nodeType },
+        inputs: { ...nodeType.inputs },
+        outputs: { ...nodeType.outputs },
+        widgets: {},
+        values: {},
+      },
+      type: nodeType.type,
+      position: flow.screenToFlowPosition(position),
+    });
 
-        onClose();
-      }}
-    >
-      <ListItemButton>
-        <ListItemIcon>
-          <VisibilityIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>{node.title}</ListItemText>
-        {/* <Typography variant="body2" color="text.secondary">
-        Display
-      </Typography> */}
-      </ListItemButton>
-    </ListItem>
+    onClose();
+  }, [nodeType, flow, position]);
+
+  const handleDragStart = useCallback(
+    (e: React.DragEvent) => {
+      e.dataTransfer.setData('application/node', nodeType.type);
+      e.dataTransfer.effectAllowed = 'move';
+    },
+    [nodeType],
+  );
+
+  return (
+    <Box p={2}>
+      <NodeView nodeType={nodeType} onClick={handleItemClick} onDragStart={handleDragStart} />
+    </Box>
   );
 };
 
@@ -146,20 +159,29 @@ const Category: FC<CategoryProps> = ({ title, id, categories, onSelect }) => {
   );
 };
 
+type Option = { label: string; type: string; category: string };
+
+const filterOptions = createFilterOptions<Option>({
+  matchFrom: 'start',
+  limit: 6,
+  trim: true,
+});
+
 type Props = {
   isOpen: boolean;
   position: any;
   onClose: () => void;
 };
 
-export const ContextMenu: FC<Props> = ({ isOpen, position, onClose }) => {
+export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
   const { data, isLoading } = apiHooks.useGetObjectInfoQuery();
 
   const [category, setCategory] = useState<string | null>(null);
+  const [seacrh, setSearch] = useState<string>('');
 
-  const [tree, flat] = useMemo(() => {
+  const [tree, flat, types] = useMemo((): [Tree<NodeType>, NodeType[], Option[]] => {
     if (!data) {
-      return [{}, []] as [Tree<NodeType>, NodeType[]];
+      return [{}, [], []];
     }
 
     const allNodes = Object.values(data);
@@ -167,6 +189,8 @@ export const ContextMenu: FC<Props> = ({ isOpen, position, onClose }) => {
     allNodes.push(...builtinNodes);
 
     const nodes = allNodes.sort((a, b) => a.category.toLocaleLowerCase().localeCompare(b.category.toLocaleLowerCase()));
+
+    const types = allNodes.map((node) => ({ label: node.title, category: node.category, type: node.type }));
 
     const tree: Tree<NodeType> = nodes.reduce((result, node) => {
       const path = node.category.replaceAll('/', '.');
@@ -180,50 +204,91 @@ export const ContextMenu: FC<Props> = ({ isOpen, position, onClose }) => {
       return result;
     }, {} as Tree<NodeType>);
 
-    return [tree, nodes] as [Tree<NodeType>, NodeType[]];
+    return [tree, nodes, types] as const;
   }, [data]);
 
   if (isLoading) {
     return null;
   }
 
-  const nodes = category ? get(tree, category.replaceAll('/', '.'))?.['__root__'] || [] : flat;
+  const nodeTypes = useMemo(() => {
+    const list = category ? get(tree, category.replaceAll('/', '.'))?.['__root__'] || [] : flat;
+    const selected = seacrh ? list.filter((nodeType) => nodeType.title.includes(seacrh)) : list;
+
+    return selected;
+  }, [category, seacrh]);
 
   return (
-    <Dialog open={isOpen} onClose={onClose} autoFocus={false} maxWidth={false}>
-      <Grid container flexShrink={0} height={640} width={940}>
-        <Grid item xs={4} flexShrink={0} height="100%" overflow="hidden">
-          <Box sx={{ overflowY: 'auto', height: '100%' }}>
-            <List>
-              {(Object.entries(tree) as [string, TreeNode<NodeType>][]).map(([title, nodes]) => {
-                return (
-                  <Category
-                    key={nodes.__id__ || title}
-                    id={nodes.__id__}
-                    title={title}
-                    categories={nodes as TreeNode<NodeType>}
-                    onSelect={setCategory}
-                  />
-                );
-              })}
-            </List>
-          </Box>
-        </Grid>
-        <Grid item xs={8} flexShrink={0} height="100%" overflow="hidden">
-          <Stack gap={1} overflow="hidden" sx={{ height: '100%' }}>
-            <Box p={1}>
-              <TextField label="Search" fullWidth />
-            </Box>
-            <Box sx={{ overflowY: 'auto', height: '100%' }}>
+    <ClickAwayListener onClickAway={onClose}>
+      <Drawer anchor="bottom" variant="persistent" open={isOpen} onClose={onClose} autoFocus={false}>
+        <Grid container columns={24} flexShrink={0} height={420}>
+          <Grid item xs={5} flexShrink={0} height="100%" overflow="hidden">
+            <Box height="100%" sx={{ overflowY: 'auto' }}>
               <List>
-                {nodes.map((node: NodeType) => (
-                  <Item key={node.type} node={node} position={position} onClose={onClose} />
-                ))}
+                {(Object.entries(tree) as [string, TreeNode<NodeType>][]).map(([title, nodes]) => {
+                  return (
+                    <Category
+                      key={nodes.__id__ || title}
+                      id={nodes.__id__}
+                      title={title}
+                      categories={nodes as TreeNode<NodeType>}
+                      onSelect={setCategory}
+                    />
+                  );
+                })}
               </List>
             </Box>
-          </Stack>
+          </Grid>
+          <Grid item xs={19} flexShrink={0} height="100%" overflow="hidden">
+            <Stack gap={1} overflow="hidden" height="100%">
+              <Box p={1}>
+                <Autocomplete
+                  freeSolo
+                  size="small"
+                  filterOptions={filterOptions}
+                  options={types}
+                  groupBy={(option) => option.category}
+                  componentsProps={{
+                    popper: {
+                      placement: 'top-start',
+                    },
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Search"
+                      fullWidth
+                      value={seacrh}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  )}
+                  renderOption={(props, option, { inputValue }) => {
+                    const matches = match(option.label, inputValue, { insideWords: true });
+                    const parts = parse(option.label, matches);
+
+                    return (
+                      <ListItem {...props}>
+                        <ListItemButton>
+                          {parts.map((part, index) => (
+                            <Typography key={index} component="span" fontWeight={part.highlight ? 'bold' : 'normal'}>
+                              {part.text}
+                            </Typography>
+                          ))}
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  }}
+                />
+              </Box>
+              <Box display="flex" flexWrap="wrap" height="100%" sx={{ overflowY: 'auto' }}>
+                {nodeTypes.map((nodeType: NodeType) => (
+                  <NodeItem key={nodeType.type} nodeType={nodeType} position={position} onClose={onClose} />
+                ))}
+              </Box>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
-    </Dialog>
+      </Drawer>
+    </ClickAwayListener>
   );
-};
+});

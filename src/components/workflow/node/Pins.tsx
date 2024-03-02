@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import React from 'react';
 
 import { Stack } from '@mui/material';
@@ -14,9 +14,9 @@ type Props = {
   isConnectable: boolean;
 };
 
-export const Pins: FC<Props> = ({ isConnectable, inputs, outputs }) => {
+export const Pins: FC<Props> = memo(({ isConnectable, inputs, outputs }) => {
   return (
-    <Stack direction="row" py={1} justifyContent="space-between" flexGrow={0} flexShrink={0}>
+    <Stack direction="row" gap={1} py={1} justifyContent="space-between" flexGrow={0} flexShrink={0}>
       <Stack>
         {Object.values(inputs)
           .filter((input) => !input.hidden)
@@ -31,4 +31,4 @@ export const Pins: FC<Props> = ({ isConnectable, inputs, outputs }) => {
       </Stack>
     </Stack>
   );
-};
+});

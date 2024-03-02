@@ -1,13 +1,18 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
+import set from 'lodash/set';
 
 import { ROUTES } from '_routes';
 import { ColorMode } from '_theme';
 
-import { CodeTheme, WorkflowBackground, WorkflowEdgeType, WorkflowHandleType } from './types';
+import { CodeTheme, Locale, WorkflowBackground, WorkflowEdgeType, WorkflowHandleType } from './types';
+
+type Paths<T> = T extends object
+  ? { [K in keyof T]: `${Exclude<K, symbol>}${'' | `.${Paths<T[K]>}`}` }[keyof T]
+  : never;
 
 type SettingsState = {
   colorMode?: ColorMode;
-  locale: string;
+  locale: Locale;
   location: string;
   codeTheme: CodeTheme;
   workflow: {
@@ -19,8 +24,10 @@ type SettingsState = {
   };
 };
 
+const BROWSER_LOCALE = navigator.language as Locale;
+
 const initialState: SettingsState = {
-  locale: navigator.language,
+  locale: Object.values(Locale).includes(BROWSER_LOCALE) ? BROWSER_LOCALE : Locale.EN_US,
   location: ROUTES.workflow,
   codeTheme: CodeTheme.Nnfx,
   workflow: {
@@ -32,37 +39,25 @@ const initialState: SettingsState = {
   },
 };
 
+const pathReducer =
+  <T, U = SettingsState>(path: Paths<U>) =>
+  (state: Draft<SettingsState>, action: PayloadAction<T>) => {
+    set(state, path, action.payload);
+  };
+
 const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    changeColorMode(state, action: PayloadAction<ColorMode>) {
-      state.colorMode = action.payload;
-    },
-    changeLocale(state, action: PayloadAction<string>) {
-      state.locale = action.payload;
-    },
-    changeLocation(state, action: PayloadAction<string>) {
-      state.location = action.payload;
-    },
-    changeCodeTheme(state, action: PayloadAction<CodeTheme>) {
-      state.codeTheme = action.payload;
-    },
-    changeWorkflowEdgeType(state, action: PayloadAction<WorkflowEdgeType>) {
-      state.workflow.edgeType = action.payload;
-    },
-    changeWorkflowHandleType(state, action: PayloadAction<WorkflowHandleType>) {
-      state.workflow.handleType = action.payload;
-    },
-    changeWorkflowBackground(state, action: PayloadAction<WorkflowBackground>) {
-      state.workflow.background = action.payload;
-    },
-    changeWorkflowSnapToGrid(state, action: PayloadAction<boolean>) {
-      state.workflow.snapToGrid = action.payload;
-    },
-    changeWorkflowSnapGrid(state, action: PayloadAction<number>) {
-      state.workflow.snapGrid = action.payload;
-    },
+    changeColorMode: pathReducer<ColorMode>('colorMode'),
+    changeLocale: pathReducer<Locale>('locale'),
+    changeLocation: pathReducer<string>('location'),
+    changeCodeTheme: pathReducer<CodeTheme>('codeTheme'),
+    changeWorkflowEdgeType: pathReducer<WorkflowEdgeType>('workflow.edgeType'),
+    changeWorkflowHandleType: pathReducer<WorkflowHandleType>('workflow.handleType'),
+    changeWorkflowBackground: pathReducer<WorkflowBackground>('workflow.background'),
+    changeWorkflowSnapToGrid: pathReducer<boolean>('workflow.snapToGrid'),
+    changeWorkflowSnapGrid: pathReducer<number>('workflow.snapGrid'),
   },
 });
 

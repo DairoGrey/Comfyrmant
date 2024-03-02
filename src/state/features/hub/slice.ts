@@ -143,6 +143,7 @@ const hubSlice = createSlice({
             started: true,
             outputs: {},
           };
+          state.executingPrompt = id;
         }
       }
     },

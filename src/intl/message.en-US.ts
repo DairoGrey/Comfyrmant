@@ -3,10 +3,23 @@ export const en_US: Record<string, string> = {
   'ui.app-bar.toolbar.color-mode-switch.mode.light': 'light',
   'ui.app-bar.toolbar.color-mode-switch.tooltip': 'Switch to {mode}',
 
-  'ui.node.context-menu.convert-input-to-widget': 'Convert <b>{input}</b> to widget',
-  'ui.node.context-menu.convert-widget-to-input': 'Convert <b>{widget}</b> to input',
+  'ui.app-bar.widgets.workflow.button.export-to-file': 'Export to file',
+  'ui.app-bar.widgets.workflow.button.import-from-file': 'Import from file',
+  'ui.app-bar.widgets.workflow.button.queue-prompt': 'Queue prompt',
+  'ui.app-bar.widgets.workflow.button.redo': 'Redo',
+  'ui.app-bar.widgets.workflow.button.undo': 'Undo',
+  'ui.app-bar.widgets.workflow.status-block.executed-prompts': 'Executed prompts',
+  'ui.app-bar.widgets.workflow.status-block.remaining-queue': 'Remaining queue',
+
+  'ui.node.context-menu.change-color': 'Change color',
+  'ui.node.context-menu.change-color.item.reset-color': 'Reset color',
+  'ui.node.context-menu.convert-input-to-widget': 'Convert to widget',
+  'ui.node.context-menu.convert-input-to-widget.item': '<colored>{input}</colored>',
+  'ui.node.context-menu.convert-widget-to-input': 'Convert to input',
+  'ui.node.context-menu.convert-widget-to-input.item': '<colored>{widget}</colored>',
   'ui.node.context-menu.disconnect-all': 'Disconnect all',
 
+  'ui.quick-actions.reset-all-colors.tooltip': 'Reset all colors',
   'ui.quick-actions.resize-to-snap-grip.tooltip': 'Resize to snap grid',
   'ui.quick-actions.select-all.tooltip': 'Select all',
 
