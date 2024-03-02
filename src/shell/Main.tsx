@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MemoryRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+
 import { Container, CssBaseline, ThemeProvider } from '@mui/material';
 
 import { AppBar } from '_components/app-bar';
@@ -73,24 +76,27 @@ const RootLayout = () => {
 
 export const Main = () => {
   const colorMode = useColorMode();
-  const theme = useMemo(() => createTheme(colorMode), [colorMode]);
 
   const locale = useSelector(settingsSel.getLocale);
   const location = useSelector(settingsSel.getLocation);
 
+  const theme = useMemo(() => createTheme(colorMode, locale), [colorMode, locale]);
+
   return (
     <IntlProvider locale={locale} messages={messages[locale]}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline enableColorScheme />
+      <LocalizationProvider dateAdapter={AdapterLuxon}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline enableColorScheme />
 
-        <Router future={ROUTER_FUTURE} initialEntries={[location]}>
-          <ReactFlowProvider>
-            <RootLayout />
-          </ReactFlowProvider>
-        </Router>
+          <Router future={ROUTER_FUTURE} initialEntries={[location]}>
+            <ReactFlowProvider>
+              <RootLayout />
+            </ReactFlowProvider>
+          </Router>
 
-        <Notifications />
-      </ThemeProvider>
+          <Notifications />
+        </ThemeProvider>
+      </LocalizationProvider>
     </IntlProvider>
   );
 };

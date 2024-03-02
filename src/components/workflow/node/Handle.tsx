@@ -1,17 +1,23 @@
-import React, { FC } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Handle as _Handle, HandleProps, Position } from 'reactflow';
+import { Handle as _Handle, HandleProps, Position, useNodeId } from 'reactflow';
 
-import { Box, Stack, styled, Typography } from '@mui/material';
+import isUndefined from 'lodash/isUndefined';
+
+import { Box, Stack, styled, Tooltip, Typography } from '@mui/material';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CircleIcon from '@mui/icons-material/Circle';
 import HexagonIcon from '@mui/icons-material/Hexagon';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import SquareIcon from '@mui/icons-material/Square';
 
 import * as settingsSel from '_state/features/settings/selector';
 import { WorkflowHandleType } from '_state/features/settings/types';
+import { getInputDefaultValue } from '_state/features/workflow/helpers';
+import * as workflowSel from '_state/features/workflow/selector';
 import { NodeInput, NodeOutput } from '_state/features/workflow/types';
+import { RootState } from '_state/store';
 import { useColorMode } from '_theme';
 
 import { colorByType } from '../utils/colorByType';
@@ -31,9 +37,13 @@ const HandleMarker = styled(_Handle)(({ theme }) => ({
   },
 }));
 
-type ExtraProps = { label?: string; color?: string };
+type ExtraProps = {
+  label?: string;
+  color?: string;
+  children?: React.ReactNode;
+};
 
-const Handle: FC<HandleProps & ExtraProps> = ({ label, color, ...props }) => {
+const Handle: FC<HandleProps & ExtraProps> = memo(({ label, color, children, ...props }) => {
   const { position, id } = props;
 
   const isLeft = position === Position.Left;
@@ -44,31 +54,19 @@ const Handle: FC<HandleProps & ExtraProps> = ({ label, color, ...props }) => {
   const HandleType = HANDLE_TYPE[handleType] || CircleIcon;
 
   return (
-    <Stack direction={isLeft ? 'row' : 'row-reverse'} gap={0.5} alignItems="center" sx={{ pointerEvents: 'none' }}>
-      <Box
-        position="relative"
-        width={18}
-        height={18}
-        left={isLeft ? 8 : undefined}
-        right={isRight ? 8 : undefined}
-        sx={{ pointerEvents: 'none' }}
-      >
+    <Stack className="nodrag nopan" direction={isLeft ? 'row' : 'row-reverse'} gap={0.5} alignItems="center">
+      <Box position="relative" width={18} height={18} left={isLeft ? 8 : undefined} right={isRight ? 8 : undefined}>
         <HandleMarker {...props} color={color}>
           <HandleType fontSize="inherit" sx={{ pointerEvents: 'none', fill: color }} />
         </HandleMarker>
       </Box>
-      <Typography
-        component="span"
-        variant="body2"
-        color="text.secondary"
-        whiteSpace="nowrap"
-        sx={{ pointerEvents: 'none' }}
-      >
+      <Typography component="span" variant="body2" color="text.secondary" whiteSpace="nowrap">
         {label ?? id}
       </Typography>
+      {children}
     </Stack>
   );
-};
+});
 
 type InputProps = {
   input: NodeInput;
@@ -79,16 +77,32 @@ type InputProps = {
 export const Input: FC<InputProps> = ({ input, isConnectable }) => {
   const colorMode = useColorMode();
 
+  const nodeId = useNodeId();
+
+  const defaultValue = getInputDefaultValue(input);
+
+  const getIsConnected = useCallback(
+    (state: RootState) => workflowSel.getIsNodeInputConnected(state, nodeId!, input.name),
+    [nodeId, input],
+  );
+
+  const isConnected = useSelector(getIsConnected);
+
   return (
     <Handle
-      key={input.name}
       id={input.name}
       type="target"
       position={Position.Left}
       isConnectable={isConnectable}
       label={input.name}
       color={colorByType(input.type, colorMode)}
-    />
+    >
+      {!isUndefined(defaultValue) && !isConnected && (
+        <Tooltip title={String(defaultValue) as React.ReactNode} placement="right">
+          <InfoOutlined color="disabled" sx={{ fontSize: 10 }} />
+        </Tooltip>
+      )}
+    </Handle>
   );
 };
 
@@ -103,7 +117,6 @@ export const Output: FC<OutputProps> = ({ output, isConnectable }) => {
 
   return (
     <Handle
-      key={output.name}
       id={output.name}
       type="source"
       position={Position.Right}

@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
 import React from 'react';
 import { Panel, ReactFlowState, useReactFlow, useStore, useStoreApi } from 'reactflow';
 
@@ -22,7 +22,7 @@ const selector = (s: ReactFlowState) => ({
   minZoom: s.minZoom,
 });
 
-export const Controls: FC = () => {
+export const Controls: FC = memo(() => {
   const store = useStoreApi();
   const { isInteractive, canZoomIn, canZoomOut, maxZoom, minZoom } = useStore(selector, shallow);
   const flow = useReactFlow();
@@ -106,4 +106,4 @@ export const Controls: FC = () => {
       </Stack>
     </Panel>
   );
-};
+});

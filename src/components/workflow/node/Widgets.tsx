@@ -110,19 +110,14 @@ const ResultWidget: FC<ResultWidgetProps> = ({ nodeId, input }) => {
 
 type Props = {
   id: string;
-  widgets?: Record<string, NodeWidgetState>;
+  widgets: Record<string, NodeWidgetState>;
   inputs: Record<string, NodeInputState>;
   outputs: Record<string, NodeOutputState>;
-  showResults: boolean;
 };
 
-export const Widgets: FC<Props> = memo(({ id, widgets, inputs, outputs, showResults }) => {
-  if (!widgets) {
-    return;
-  }
-
+export const Widgets: FC<Props> = memo(({ id, widgets, inputs, outputs }) => {
   return (
-    <Stack direction="column" gap={2} px={3} py={2} overflow="hidden" flexShrink={0}>
+    <Stack className="nodrag" direction="column" gap={2} px={3} py={2} overflow="hidden" flexShrink={0}>
       {Object.values(widgets).map((widget) => {
         const key = `${id}-${widget.name}-${widget.type}`;
 
@@ -132,7 +127,21 @@ export const Widgets: FC<Props> = memo(({ id, widgets, inputs, outputs, showResu
 
         return <IntputWidget key={key} nodeId={id} widget={widget} inputs={inputs} />;
       })}
-      {showResults && Object.values(inputs).map((input) => <ResultWidget key={input.name} nodeId={id} input={input} />)}
+    </Stack>
+  );
+});
+
+type ResultsProps = {
+  id: string;
+  inputs: Record<string, NodeInputState>;
+};
+
+export const Results: FC<ResultsProps> = memo(({ id, inputs }) => {
+  return (
+    <Stack className="nodrag" direction="column" gap={2} px={3} py={2} overflow="hidden" flexShrink={0}>
+      {Object.values(inputs).map((input) => (
+        <ResultWidget key={input.name} nodeId={id} input={input} />
+      ))}
     </Stack>
   );
 });

@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useState } from 'react';
+import { FC, memo, useCallback, useRef, useState } from 'react';
 import React from 'react';
 
 import { IconButton, Stack, Typography } from '@mui/material';
@@ -7,7 +7,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { NodeInputState, NodeWidgetState } from '_state/features/workflow/types';
 
-import { NodeContextMenu } from './ContextMenu';
+import { ContextMenu } from './context-menu';
 import { ProgressBar } from './ProgressBar';
 
 type Props = {
@@ -16,9 +16,11 @@ type Props = {
 
   inputs: Record<string, NodeInputState>;
   widgets?: Record<string, NodeWidgetState>;
+
+  children?: React.ReactNode;
 };
 
-export const Header: FC<Props> = ({ id, title, inputs, widgets }) => {
+export const Header: FC<Props> = memo(({ id, title, inputs, widgets, children }) => {
   const [open, setOpen] = useState(false);
   const anchorElRef = useRef<HTMLButtonElement>(null);
 
@@ -49,14 +51,15 @@ export const Header: FC<Props> = ({ id, title, inputs, widgets }) => {
             <Typography component="h6" color="text.primary" variant="subtitle2" whiteSpace="nowrap">
               {title}
             </Typography>
+            {children}
           </Stack>
-          <IconButton ref={anchorElRef} edge="end" onClick={handleShow}>
+          <IconButton className="nodrag" ref={anchorElRef} edge="end" onClick={handleShow}>
             <MoreVertIcon />
           </IconButton>
         </Stack>
         <ProgressBar id={id} />
       </Stack>
-      <NodeContextMenu
+      <ContextMenu
         open={open}
         anchorEl={anchorElRef.current}
         id={id}
@@ -66,4 +69,4 @@ export const Header: FC<Props> = ({ id, title, inputs, widgets }) => {
       />
     </>
   );
-};
+});

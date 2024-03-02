@@ -22,13 +22,9 @@ export const SubMenuItem: FC<SubMenuItemProps> = ({
     setOpen((v) => !v);
   }, [setOpen]);
 
-  const handleClose = useCallback(
-    (e: React.MouseEvent<HTMLLIElement>, reason: 'backdropClick' | 'escapeKeyDown') => {
-      setOpen(false);
-      onClose?.(e, reason);
-    },
-    [onClose],
-  );
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, [onClose]);
 
   return (
     <>

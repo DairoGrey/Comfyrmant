@@ -8,7 +8,7 @@ import { transformHistory, transformObjectInfo } from './transform';
 import { HistoryResponse, PromptRequest, PromptResponse } from './types';
 
 const base = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: location.toString(),
 });
 
 const axiosQuery: BaseQueryFn = async (

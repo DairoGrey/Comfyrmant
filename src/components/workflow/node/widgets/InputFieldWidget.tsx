@@ -15,31 +15,31 @@ import { NodeInputState, NodeOutputState, NodeWidgetState } from '_state/feature
 import { useFloatSteps } from './hooks/useFloatSteps';
 import { useIntSteps } from './hooks/useIntSteps';
 
-const PARSER: Record<string, (v: unknown) => unknown> = {
-  INT: (v: unknown) => {
+const PARSER: Record<string, (v: unknown, precision?: number) => unknown> = {
+  INT: (v: unknown, places: number = 0) => {
     if (typeof v !== 'string') {
       return null;
     }
 
     const n = Number.parseInt(v);
 
-    return Number.isNaN(n) ? null : Number(n.toFixed(0));
+    return Number.isNaN(n) ? null : Number(n.toFixed(places));
   },
-  FLOAT: (v: unknown) => {
+  FLOAT: (v: unknown, places: number = 2) => {
     if (typeof v !== 'string') {
       return null;
     }
 
     const n = Number.parseFloat(v);
 
-    return Number.isNaN(n) ? null : Number(n.toFixed(2));
+    return Number.isNaN(n) ? null : Number(n.toFixed(places));
   },
   STRING: (v: unknown) => v,
 };
 
-const SERIALIZER: Record<string, (v: unknown) => string> = {
-  INT: (v: unknown) => (v === null ? '' : Number(v).toFixed(0)),
-  FLOAT: (v: unknown) => (v === null || Number.isNaN(v) ? '' : Number(v).toFixed(2)),
+const SERIALIZER: Record<string, (v: unknown, places?: number) => string> = {
+  INT: (v: unknown, places: number = 0) => (v === null ? '' : Number(v).toFixed(places)),
+  FLOAT: (v: unknown, places: number = 2) => (v === null || Number.isNaN(v) ? '' : Number(v).toFixed(places)),
   STRING: (v: unknown) => v as string,
 };
 
@@ -51,7 +51,7 @@ type NumberAdornmentProps = {
   onOptionsChange: (options: Record<string, unknown>) => void;
 };
 
-const IntNumberAdornment: FC<NumberAdornmentProps> = ({ value, widget, input, onChange, onOptionsChange }) => {
+const IntNumberAdornment: FC<NumberAdornmentProps> = memo(({ value, widget, input, onChange, onOptionsChange }) => {
   const { canStepDown, canStepUp, handleStepDown, handleStepUp, handleRandomTick } = useIntSteps(
     onChange,
     input?.options,
@@ -99,9 +99,9 @@ const IntNumberAdornment: FC<NumberAdornmentProps> = ({ value, widget, input, on
       </Tooltip>
     </InputAdornment>
   );
-};
+});
 
-const FloatNumberAdornment: FC<NumberAdornmentProps> = ({ value, input, onChange }) => {
+const FloatNumberAdornment: FC<NumberAdornmentProps> = memo(({ value, input, onChange }) => {
   const { canStepDown, canStepUp, handleStepDown, handleStepUp } = useFloatSteps(onChange, input?.options, value);
 
   return (
@@ -122,7 +122,7 @@ const FloatNumberAdornment: FC<NumberAdornmentProps> = ({ value, input, onChange
       </Tooltip>
     </InputAdornment>
   );
-};
+});
 
 const ADORNMENT: Record<string, any> = {
   INT: IntNumberAdornment,
@@ -148,21 +148,17 @@ export const InputFieldWidget: FC<Props> = memo(({ value, widget, input, output,
 
   const name = input?.name || output?.name;
   const multiline = (input?.options?.multiline || widget?.options?.multiline) as boolean | undefined;
+  const round = input?.options?.round as number | undefined;
+
+  const places = round && round < 1 ? Math.abs(Math.log10(round) + 1) : undefined;
 
   const parse = PARSER[type];
   const serialize = SERIALIZER[type];
 
-  const Adornment = ADORNMENT[type] || null;
+  const Adornment: FC<NumberAdornmentProps> | null = ADORNMENT[type] || null;
 
   const endAdornment = Adornment ? (
-    <Adornment
-      isInt={type === 'INT'}
-      value={value}
-      widget={widget}
-      options={input?.options}
-      onChange={onChange}
-      onOptionsChange={onOptionsChange}
-    />
+    <Adornment value={value} widget={widget} input={input} onChange={onChange} onOptionsChange={onOptionsChange} />
   ) : null;
 
   return (
@@ -172,12 +168,11 @@ export const InputFieldWidget: FC<Props> = memo(({ value, widget, input, output,
       multiline={multiline}
       minRows={multiline ? 3 : undefined}
       label={name}
-      value={serialize(value)}
+      value={serialize(value, places)}
       InputProps={{
         endAdornment,
       }}
-      onFocus={(e) => e.target.select()}
-      onChange={(e) => onChange(parse(e.target.value))}
+      onChange={(e) => onChange(parse(e.target.value, places))}
     />
   );
 });

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const base = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: location.toString(),
 });
 
 export const getObjectInfo = async () => {

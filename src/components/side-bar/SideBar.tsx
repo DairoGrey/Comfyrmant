@@ -56,7 +56,7 @@ const GeneralSettingsList = () => {
             fullWidth
             value={locale}
             onChange={(e) => {
-              dispatch(settingsAct.changeLocale(e.target.value));
+              dispatch(settingsAct.changeLocale(e.target.value as Locale));
             }}
           >
             <MenuItem value={Locale.EN_US}>EN (US)</MenuItem>
@@ -140,7 +140,9 @@ const WorkflowSettingsList: FC<{ visible: boolean }> = ({ visible }) => {
             }}
           >
             <MenuItem value={WorkflowEdgeType.Curve}>Curve</MenuItem>
+            <MenuItem value={WorkflowEdgeType.SimpleCurve}>SimpleCurve</MenuItem>
             <MenuItem value={WorkflowEdgeType.SmoothStep}>SmoothStep</MenuItem>
+            <MenuItem value={WorkflowEdgeType.Step}>Step</MenuItem>
             <MenuItem value={WorkflowEdgeType.Straight}>Straight</MenuItem>
           </Select>
         }

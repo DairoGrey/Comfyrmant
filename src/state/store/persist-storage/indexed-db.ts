@@ -2,6 +2,7 @@ import Dexie, { Table } from 'dexie';
 import { Storage } from 'redux-persist';
 
 export interface Data {
+  slice: string;
   bucket: string;
   state: unknown;
 }
@@ -12,7 +13,7 @@ export class PersistDexie extends Dexie {
   constructor(name: string) {
     super(name);
     this.version(1).stores({
-      data: 'bucket',
+      data: 'slice,bucket',
     });
   }
 }
@@ -24,11 +25,12 @@ function storage(dbName: string): Storage {
     getItem: (key) => {
       return db.data
         .where({ bucket: key })
-        .first()
-        .then((item) => (item ? item.state : undefined));
+        .toArray((records) => records.reduce((result, { slice, state }) => ({ ...result, [slice]: state }), {}));
     },
     setItem: (key, value) => {
-      return db.data.put({ bucket: key, state: value });
+      return Promise.allSettled(
+        Object.entries(value).map(([slice, state]) => db.data.put({ bucket: key, slice, state })),
+      );
     },
     removeItem: (key) => {
       return db.data.where({ bucket: key }).delete();

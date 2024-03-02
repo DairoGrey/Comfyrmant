@@ -2,9 +2,11 @@ import { eventChannel } from 'redux-saga';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { getImageView, getQueue } from '_api/index';
-import * as apiSlice from '_state/features/api/slice';
+import { default as apiQueries } from '_state/features/api/slice';
 
 import { QueueResponse } from '../api/types';
+import * as blobsSaga from '../blobs/saga';
+import { BlobType } from '../blobs/types';
 
 import * as hubAct from './slice';
 import {
@@ -85,6 +87,14 @@ function* executedFlow(message: ExecutedMessage) {
   for (const image of output.images) {
     const blob: Blob = yield call(getImageView, image.filename, image.type, image.subfolder);
 
+    yield call(
+      blobsSaga.saveBlob,
+      image.filename,
+      image.type === 'temp' ? BlobType.Preview : BlobType.Output,
+      blob,
+      image,
+    );
+
     data.images.push({
       filename: image.filename,
       url: URL.createObjectURL(blob),
@@ -93,7 +103,7 @@ function* executedFlow(message: ExecutedMessage) {
 
   yield put(hubAct.executed({ id, output: data, node }));
 
-  yield call(apiSlice.default.util.invalidateTags, ['history']);
+  yield call(apiQueries.util.invalidateTags, ['history']);
 }
 
 function* messageFlow(message: Message) {
@@ -131,7 +141,7 @@ function* restoreQueue() {
 export function* hubSaga() {
   const clientId: string | undefined = yield call([sessionStorage, sessionStorage.getItem], 'clientId');
 
-  const socket: WebSocket = new WebSocket(`${process.env.WS_URL!}/ws${clientId ? `?clientId=${clientId}` : ''}`);
+  const socket: WebSocket = new WebSocket(`ws://${location.host}/ws${clientId ? `?clientId=${clientId}` : ''}`);
 
   const messageChannel = eventChannel<Message>((input) => {
     const handler = (event: MessageEvent) => {

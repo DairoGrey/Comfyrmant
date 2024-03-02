@@ -5,8 +5,9 @@ import { Box, Divider, Paper, Stack, Typography } from '@mui/material';
 
 import BoltIcon from '@mui/icons-material/Bolt';
 
-import { ResizeToSnapGrid } from './quick-actions/resize-to-snap-grid';
-import { SelectAll } from './quick-actions/select-all';
+import { ResetAllColors } from './reset-all-colors';
+import { ResizeToSnapGrid } from './resize-to-snap-grid';
+import { SelectAll } from './select-all';
 
 export const QuickActions: FC = () => {
   return (
@@ -20,6 +21,7 @@ export const QuickActions: FC = () => {
         <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={1} p={1}>
           <ResizeToSnapGrid />
           <SelectAll />
+          <ResetAllColors />
         </Box>
       </Stack>
     </Panel>

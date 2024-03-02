@@ -20,7 +20,9 @@ export enum WorkflowBackground {
 
 export enum WorkflowEdgeType {
   Curve = 'curve',
+  SimpleCurve = 'simple-curve',
   SmoothStep = 'smooth-step',
+  Step = 'step',
   Straight = 'straight',
 }
 

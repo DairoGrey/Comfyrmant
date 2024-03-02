@@ -1,0 +1,1 @@
+export { ResetAllColors } from './ResetAllColors';

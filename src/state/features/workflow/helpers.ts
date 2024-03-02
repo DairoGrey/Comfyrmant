@@ -1,7 +1,7 @@
 import { Edge, getConnectedEdges, Node } from 'reactflow';
 
 import { PromptNodeData } from '_state/features/api/types';
-import { NodeStateData } from '_state/features/workflow/types';
+import { NodeInputState, NodeStateData } from '_state/features/workflow/types';
 
 type Tuple = [Node<NodeStateData> | undefined, string | undefined];
 
@@ -15,7 +15,7 @@ export const getConnectedSourceNode = (
 
   if (targetNode) {
     const connectedEdges = getConnectedEdges([targetNode], edges);
-    const valueEdge = connectedEdges.find((edge) => edge.targetHandle === input);
+    const valueEdge = connectedEdges.filter((edge) => edge.source !== id).find((edge) => edge.targetHandle === input);
 
     if (!valueEdge || !valueEdge.sourceHandle) {
       return [undefined, undefined];
@@ -34,6 +34,16 @@ export const getConnectedSourceNode = (
 };
 
 export const getSourceNode = () => {};
+
+export const getInputDefaultValue = (input: NodeInputState) => {
+  const defaultValue = input.options?.default;
+
+  if (defaultValue === undefined && Array.isArray(input.type)) {
+    return input.type[0];
+  }
+
+  return defaultValue;
+};
 
 export const buildPrompt = (nodes: Node<NodeStateData>[], edges: Edge[]): Record<string | number, PromptNodeData> => {
   const getInputConnection = (id: string, input: string) => {
@@ -62,7 +72,8 @@ export const buildPrompt = (nodes: Node<NodeStateData>[], edges: Edge[]): Record
 
             return {
               ...result,
-              [input.name]: value !== undefined ? value : getInputConnection(node.id, input.name),
+              [input.name]:
+                value !== undefined ? value : getInputConnection(node.id, input.name) || getInputDefaultValue(input),
             };
           }, {}),
         },

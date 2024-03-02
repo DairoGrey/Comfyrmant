@@ -26,7 +26,7 @@ const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> & {
   key: 'root',
   version: 1,
   storage: indexedDbStorage('persist'),
-  blacklist: ['@api', '@hub', '@notifications'],
+  blacklist: ['@api', '@blobs', '@hub', '@notifications'],
   stateReconciler: autoMergeLevel2,
   serialize: false,
   deserialize: false,
