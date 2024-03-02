@@ -32,11 +32,11 @@ import { useColorMode } from '_theme';
 import { ApiNode } from './nodes/ApiNode';
 import { createMiniMapNodeColorGetter } from './utils/backgroundColor';
 import { ConnectionLine } from './ConnectionLine';
-import { ContextMenu } from './ContextMenu';
+import { ContextMenu } from './context-menu';
 import { Controls } from './Controls';
 import { builtinEdgeTypes } from './edges';
 import { MiniMap } from './MiniMap';
-import { builtinNodeTypes } from './nodes';
+import { builtinNodes, builtinNodeTypes } from './nodes';
 import { QuickActions } from './quick-actions';
 
 type OnEdgeUpdateStartFunc = (e: React.MouseEvent, edge: Edge<any>, handleType: HandleType) => void;
@@ -75,7 +75,7 @@ export const Workflow = () => {
 
   const nodeTypes = useMemo(() => {
     if (!data) {
-      return builtinNodeTypes;
+      return builtinNodes;
     }
 
     return Object.values(data!).reduce(
@@ -83,7 +83,7 @@ export const Workflow = () => {
         ...result,
         [node.type]: ApiNode,
       }),
-      { ...builtinNodeTypes },
+      { ...builtinNodes },
     );
   }, [data]);
 
@@ -110,20 +110,16 @@ export const Workflow = () => {
 
       const type = e.dataTransfer.getData('application/node');
 
-      // check if the dropped element is valid
       if (typeof type === 'undefined' || !type) {
         return;
       }
 
-      // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
       const position = flow.screenToFlowPosition({
         x: e.clientX,
         y: e.clientY,
       });
 
-      const nodeType = data[type];
+      const nodeType = data[type] || builtinNodeTypes[type];
 
       if (!nodeType) {
         return;

@@ -27,7 +27,9 @@ const HANDLE_TYPE: Record<WorkflowHandleType, typeof CircleIcon> = {
   [WorkflowHandleType.Hexagon]: HexagonIcon,
 };
 
-const HandleMarker = styled(Box)(() => ({}));
+const HandleMarker = styled(Box)(() => ({
+  fontSize: 14,
+}));
 
 type HandleViewProps = {
   id: string;
