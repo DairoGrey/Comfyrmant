@@ -4,7 +4,6 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import set from 'lodash/set';
 
-import { builtinNodeTypes } from '_components/workflow/nodes';
 import { NodeType, NodeTypes } from '_state/features/workflow/types';
 
 import { NodeOption, Tree } from '../types';
@@ -18,8 +17,6 @@ export const useNodeCategoryTree = (data: NodeTypes | undefined) => {
     }
 
     const allNodes = Object.values(data);
-
-    allNodes.push(...Object.values(builtinNodeTypes));
 
     const nodes = allNodes.sort((a, b) => a.category.toLocaleLowerCase().localeCompare(b.category.toLocaleLowerCase()));
 

@@ -4,7 +4,7 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 import { Patch } from 'immer';
 import * as uuid from 'uuid';
 
-import { NodeStateData } from '_state/features/workflow/types';
+import { ExportedWorkflow, NodeStateData } from '_state/features/workflow/types';
 
 import * as reducers from './reducers';
 
@@ -31,12 +31,14 @@ const initialState: WorkflowState = {
   },
 };
 
-export const randomTick = createAction('workflow/random-tick');
-export const queuePrompt = createAction('workflow/queue-prompt');
-export const resizeToSnapGrid = createAction('workflow/resize-to-snap-grid');
-export const selectAll = createAction('workflow/select-all');
-export const exportToFile = createAction('workflow/export-to-file');
-export const importFromFile = createAction('workflow/import-from-file');
+export const randomTick = createAction('workflow/randomTick');
+export const queuePrompt = createAction('workflow/queuePrompt');
+export const resizeToSnapGrid = createAction('workflow/resizeToSnapGrid');
+export const selectAll = createAction('workflow/selectAll');
+export const exportToFile = createAction<{ fileName: string; includeSettings: boolean }>('workflow/exportToFile');
+export const importFromFile = createAction<{ workflow: ExportedWorkflow; includeSettings: boolean }>(
+  'workflow/importFromFile',
+);
 
 const workflowSlice = createSlice({
   name: 'workflow',

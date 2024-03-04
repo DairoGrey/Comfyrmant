@@ -32,3 +32,11 @@ export enum WorkflowHandleType {
   Arrow = 'arrow',
   Hexagon = 'hexagon',
 }
+
+export type WorkflowSettings = {
+  edgeType: WorkflowEdgeType;
+  handleType: WorkflowHandleType;
+  background: WorkflowBackground;
+  snapToGrid: boolean;
+  snapGrid: number;
+};

@@ -1,9 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 
-import { Autocomplete, createFilterOptions, ListItemButton, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  AutocompleteInputChangeReason,
+  createFilterOptions,
+  ListItemButton,
+  TextField,
+  Typography,
+} from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 
 import { NodeOption } from '../types';
@@ -21,6 +28,18 @@ type Props = {
 };
 
 export const NodeSearchField: FC<Props> = ({ value, options, onChange }) => {
+  const handleChange = useCallback(
+    (e: React.SyntheticEvent, value: string, reason: AutocompleteInputChangeReason) => {
+      if (reason === 'input' || reason === 'reset') {
+        onChange(value);
+      }
+      if (reason === 'clear') {
+        onChange('');
+      }
+    },
+    [onChange],
+  );
+
   return (
     <Autocomplete
       freeSolo
@@ -33,9 +52,8 @@ export const NodeSearchField: FC<Props> = ({ value, options, onChange }) => {
           placement: 'top-start',
         },
       }}
-      renderInput={(params) => (
-        <TextField {...params} label="Search" fullWidth value={value} onChange={(e) => onChange(e.target.value)} />
-      )}
+      onInputChange={handleChange}
+      renderInput={(params) => <TextField {...params} label="Search" fullWidth value={value} />}
       renderOption={(props, option, { inputValue }) => {
         const matches = match(option.label, inputValue, { insideWords: true });
         const parts = parse(option.label, matches);

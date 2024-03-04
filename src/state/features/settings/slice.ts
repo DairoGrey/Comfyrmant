@@ -4,7 +4,7 @@ import set from 'lodash/set';
 import { ROUTES } from '_routes';
 import { ColorMode } from '_theme';
 
-import { CodeTheme, Locale, WorkflowBackground, WorkflowEdgeType, WorkflowHandleType } from './types';
+import { CodeTheme, Locale, WorkflowBackground, WorkflowEdgeType, WorkflowHandleType, WorkflowSettings } from './types';
 
 type Paths<T> = T extends object
   ? { [K in keyof T]: `${Exclude<K, symbol>}${'' | `.${Paths<T[K]>}`}` }[keyof T]
@@ -15,13 +15,7 @@ type SettingsState = {
   locale: Locale;
   location: string;
   codeTheme: CodeTheme;
-  workflow: {
-    edgeType: WorkflowEdgeType;
-    handleType: WorkflowHandleType;
-    background: WorkflowBackground;
-    snapToGrid: boolean;
-    snapGrid: number;
-  };
+  workflow: WorkflowSettings;
 };
 
 const BROWSER_LOCALE = navigator.language as Locale;
@@ -58,6 +52,8 @@ const settingsSlice = createSlice({
     changeWorkflowBackground: pathReducer<WorkflowBackground>('workflow.background'),
     changeWorkflowSnapToGrid: pathReducer<boolean>('workflow.snapToGrid'),
     changeWorkflowSnapGrid: pathReducer<number>('workflow.snapGrid'),
+
+    importWorkflowSettings: pathReducer<WorkflowSettings>('workflow'),
   },
 });
 
@@ -71,6 +67,8 @@ export const {
   changeWorkflowBackground,
   changeWorkflowSnapGrid,
   changeWorkflowSnapToGrid,
+
+  importWorkflowSettings,
 } = settingsSlice.actions;
 
 export default settingsSlice;
