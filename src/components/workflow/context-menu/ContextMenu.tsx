@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { FC } from 'react';
+import { useSelector } from 'react-redux';
 import { useReactFlow } from 'reactflow';
 
 import get from 'lodash/get';
@@ -7,7 +8,7 @@ import * as uuid from 'uuid';
 
 import { Box, ClickAwayListener, Drawer, Grid, Stack } from '@mui/material';
 
-import * as apiHooks from '_state/features/api/slice';
+import * as apiSel from '_state/features/api/selector';
 import { NodeStateData } from '_state/features/workflow/types';
 
 import { CategoryMenu } from './components/CategoryMenu';
@@ -23,27 +24,23 @@ type Props = {
 export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
   const flow = useReactFlow<NodeStateData>();
 
-  const { data, isLoading } = apiHooks.useGetObjectInfoQuery();
+  const nodes = useSelector(apiSel.getObjectsInfoData);
 
-  const [category, setCategory] = useState<string | null>(null);
-  const [seacrh, setSearch] = useState<string>('');
+  const [category, setCategory] = useState<string | undefined>();
+  const [search, setSearch] = useState<string>('');
 
-  const [tree, flat, types] = useNodeCategoryTree(data);
+  const [tree, flat, types] = useNodeCategoryTree(nodes);
 
   const nodeTypes = useMemo(() => {
     const list = category ? get(tree, category.replaceAll('/', '.'))?.['__root__'] || [] : flat;
-    const selected = seacrh ? list.filter((nodeType) => nodeType.title.includes(seacrh)) : list;
+    const selected = search ? list.filter((nodeType) => nodeType.title.includes(search)) : list;
 
     return selected;
-  }, [category, seacrh]);
-
-  if (isLoading) {
-    return null;
-  }
+  }, [category, search]);
 
   const handleItemClick = useCallback(
     (e: React.MouseEvent, type: string) => {
-      const nodeType = data?.[type];
+      const nodeType = nodes?.[type];
 
       if (!nodeType) {
         return;
@@ -64,7 +61,7 @@ export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
 
       onClose();
     },
-    [data, flow, position],
+    [nodes, flow, position],
   );
 
   const handleDragStart = useCallback((e: React.DragEvent, type: string) => {
@@ -72,22 +69,49 @@ export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
     e.dataTransfer.effectAllowed = 'move';
   }, []);
 
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearch(value);
+
+      if (category) {
+        setCategory(undefined);
+      }
+    },
+    [search, setCategory, setSearch],
+  );
+
+  const handleCategorySelect = useCallback(
+    (value?: string) => {
+      setCategory(value);
+
+      if (category) {
+        setSearch('');
+      }
+    },
+    [search, setCategory, setSearch],
+  );
+
+  if (!nodes) {
+    return null;
+  }
+
   return (
     <ClickAwayListener onClickAway={onClose}>
       <Drawer anchor="bottom" variant="persistent" open={isOpen} onClose={onClose} autoFocus={false}>
         <Grid container columns={24} flexShrink={0} height={420}>
           <Grid item xs={5} flexShrink={0} height="100%" overflow="hidden">
             <Box height="100%" sx={{ overflowY: 'auto' }}>
-              <CategoryMenu tree={tree} onCategorySelect={setCategory} />
+              <CategoryMenu tree={tree} selectedCategory={category} onCategorySelect={handleCategorySelect} />
             </Box>
           </Grid>
           <Grid item xs={19} flexShrink={0} height="100%" overflow="hidden">
             <Stack gap={1} overflow="hidden" height="100%">
               <NodeBrowser
-                searchValue={seacrh}
+                searchValue={search}
                 nodeOptions={types}
                 nodeTypes={nodeTypes}
-                onSearchChange={setSearch}
+                limit={category ? -1 : 10}
+                onSearchChange={handleSearch}
                 onNodeClick={handleItemClick}
                 onNodeDragStart={handleDragStart}
               />

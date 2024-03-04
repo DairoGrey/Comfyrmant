@@ -1,18 +1,13 @@
-import { DISPLAY_NODE_DATA, DisplayNode } from './DisplayNode';
-import { INTEGER_NODE_DATA, IntegerNode } from './IntegerNode';
-import { NOTE_NODE_DATA, NoteNode } from './NoteNode';
-import { STRING_NODE_DATA, StringNode } from './StringNode';
+import { DISPLAY_NODE_DATA, INTEGER_NODE_DATA, NOTE_NODE_DATA, STRING_NODE_DATA } from '_state/features/workflow/data';
+
+import { DisplayNode } from './DisplayNode';
+import { IntegerNode } from './IntegerNode';
+import { NoteNode } from './NoteNode';
+import { StringNode } from './StringNode';
 
 export const builtinNodes = {
   [DISPLAY_NODE_DATA.nodeType.type]: DisplayNode,
   [INTEGER_NODE_DATA.nodeType.type]: IntegerNode,
   [STRING_NODE_DATA.nodeType.type]: StringNode,
   [NOTE_NODE_DATA.nodeType.type]: NoteNode,
-};
-
-export const builtinNodeTypes = {
-  [DISPLAY_NODE_DATA.nodeType.type]: DISPLAY_NODE_DATA.nodeType,
-  [INTEGER_NODE_DATA.nodeType.type]: INTEGER_NODE_DATA.nodeType,
-  [STRING_NODE_DATA.nodeType.type]: STRING_NODE_DATA.nodeType,
-  [NOTE_NODE_DATA.nodeType.type]: NOTE_NODE_DATA.nodeType,
 };

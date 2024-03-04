@@ -1,17 +1,19 @@
-import { Node, NodeChange, NodeDimensionChange, NodePositionChange, NodeSelectionChange } from 'reactflow';
+import { Edge, Node, NodeChange, NodeDimensionChange, NodePositionChange, NodeSelectionChange } from 'reactflow';
 
 import { all, put, select, takeEvery } from 'redux-saga/effects';
 
+import * as apiSel from '_state/features/api/selector';
 import { default as apiQueries } from '_state/features/api/slice';
 import { PromptErrorResponse, PromptRequest, PromptResponse } from '_state/features/api/types';
 import * as hubAct from '_state/features/hub/slice';
 import * as notificationsAct from '_state/features/notifications/slice';
 import { Severity } from '_state/features/notifications/types';
 import * as settingsSel from '_state/features/settings/selector';
+import * as settingsAct from '_state/features/settings/slice';
 
 import * as workflowSel from './selector';
 import * as workflowAct from './slice';
-import { NodeStateData } from './types';
+import { NodeStateData, NodeTypes } from './types';
 
 const alignSizeToUp = (value: number, alignment: number) => alignment * Math.ceil(Math.abs(value / alignment));
 const alignPositionToUp = (value: number, alignment: number) => alignment * Math.ceil(value / alignment);
@@ -112,9 +114,85 @@ function* queuePromptFlow() {
   }
 }
 
-function* exportToFileFlow() {}
+function* exportToFileFlow(action: ReturnType<typeof workflowAct.exportToFile>) {
+  const { fileName, includeSettings } = action.payload;
 
-function importFromFileFlow() {}
+  const settings: unknown = yield select(settingsSel.getWorkflow);
+
+  const nodes: Node<NodeStateData>[] = yield select(workflowSel.getNodes);
+  const edges: Edge[] = yield select(workflowSel.getEdges);
+
+  const exportedNodes = nodes.map((node) => ({
+    id: node.id,
+    type: node.data.nodeType.type,
+    x: node.position.x,
+    y: node.position.y,
+    inputs: node.data.inputs,
+    outputs: node.data.outputs,
+    widgets: node.data.widgets,
+    values: node.data.values,
+    tags: node.data.tags,
+  }));
+
+  const exportedEdges = edges.map((edge) => edge.id);
+
+  const payload = includeSettings
+    ? {
+        settings,
+        nodes: exportedNodes,
+        edges: exportedEdges,
+      }
+    : { nodes: exportedNodes, edges: exportedEdges };
+
+  const hiddenElement = document.createElement('a');
+  hiddenElement.href = 'data:application/json,' + encodeURI(JSON.stringify(payload));
+  hiddenElement.target = '_blank';
+  hiddenElement.download = `${fileName}.json`;
+  hiddenElement.click();
+}
+
+function* importFromFileFlow(action: ReturnType<typeof workflowAct.importFromFile>) {
+  const { workflow, includeSettings } = action.payload;
+
+  const nodeTypes: NodeTypes = yield select(apiSel.getObjectsInfoData);
+
+  const importedNodes: Node<NodeStateData>[] = workflow.nodes.map((node) => ({
+    id: node.id,
+    type: node.type,
+    position: { x: node.x, y: node.y },
+    width: node.width,
+    height: node.height,
+    data: {
+      nodeType: nodeTypes[node.type],
+      inputs: node.inputs,
+      outputs: node.outputs,
+      widgets: node.widgets,
+      values: node.values,
+      tags: node.tags,
+    },
+  }));
+
+  const importedEdges = workflow.edges.map((id) => {
+    const [sourcePair, targetPair] = id.split('->');
+    const [source, sourceHandle] = sourcePair.split(':');
+    const [target, targetHandle] = targetPair.split(':');
+
+    return {
+      id,
+      source,
+      sourceHandle,
+      target,
+      targetHandle,
+    };
+  });
+
+  yield put(workflowAct.applyNodeChanges(importedNodes.map((node) => ({ type: 'add', item: node }))));
+  yield put(workflowAct.applyEdgeChanges(importedEdges.map((edge) => ({ type: 'add', item: edge }))));
+
+  if (includeSettings && workflow.settings) {
+    yield put(settingsAct.importWorkflowSettings(workflow.settings));
+  }
+}
 
 export function* workflowSaga() {
   yield takeEvery(workflowAct.randomTick.type, randomTickFlow);

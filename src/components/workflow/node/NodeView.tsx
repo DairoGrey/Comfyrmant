@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
 import React from 'react';
 
 import * as uuid from 'uuid';
@@ -16,7 +16,7 @@ type Props = {
   onDragStart?: (e: React.DragEvent, type: string) => void;
 };
 
-export const NodeView: FC<Props> = ({ nodeType, onClick, onDragStart }) => {
+export const NodeView: FC<Props> = memo(({ nodeType, onClick, onDragStart }) => {
   const { type, title, inputs, outputs } = nodeType;
 
   const hasPins = Object.values(inputs).length > 0 || Object.keys(outputs).length > 0;
@@ -75,4 +75,4 @@ export const NodeView: FC<Props> = ({ nodeType, onClick, onDragStart }) => {
       )}
     </Stack>
   );
-};
+});

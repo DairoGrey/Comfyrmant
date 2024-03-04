@@ -11,6 +11,7 @@ export const getLocale = createSelector(getSettings, (settings) => settings.loca
 export const getLocation = createSelector(getSettings, (settings) => settings.location);
 export const getCodeTheme = createSelector(getSettings, (settings) => settings.codeTheme);
 
+export const getWorkflow = createSelector(getSettings, (settings) => settings.workflow);
 export const getWorkflowEdgeType = createSelector(getSettings, (settings) => settings.workflow.edgeType);
 export const getWorkflowHandleType = createSelector(getSettings, (settings) => settings.workflow.handleType);
 export const getWorkflowBackground = createSelector(getSettings, (settings) => settings.workflow.background);

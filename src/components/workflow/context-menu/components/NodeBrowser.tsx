@@ -15,6 +15,8 @@ type Props = {
   nodeOptions: NodeOption[];
   nodeTypes: NodeType[];
 
+  limit?: number;
+
   onSearchChange: (value: string) => void;
   onNodeClick: (e: React.MouseEvent, type: string) => void;
   onNodeDragStart: (e: React.DragEvent, type: string) => void;
@@ -24,10 +26,13 @@ export const NodeBrowser: FC<Props> = ({
   searchValue,
   nodeOptions,
   nodeTypes,
+  limit = 10,
   onSearchChange,
   onNodeClick,
   onNodeDragStart,
 }) => {
+  const list = limit === -1 ? nodeTypes : nodeTypes.slice(0, limit);
+
   return (
     <>
       <Stack p={1} gap={0.5}>
@@ -37,7 +42,7 @@ export const NodeBrowser: FC<Props> = ({
         </Alert>
       </Stack>
       <Stack direction="row" p={1} gap={2} flexWrap="wrap" height="100%" sx={{ overflowY: 'auto' }}>
-        {nodeTypes.map((nodeType: NodeType) => (
+        {list.map((nodeType: NodeType) => (
           <Box key={nodeType.type}>
             <NodeView nodeType={nodeType} onClick={onNodeClick} onDragStart={onNodeDragStart} />
           </Box>

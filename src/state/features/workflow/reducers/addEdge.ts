@@ -13,7 +13,10 @@ export const addEdge = (state: Draft<WorkflowState>, action: PayloadAction<Edge 
   const edges = produce(
     state.edges,
     (edges) => {
-      const newEdges = ReactFlow.addEdge(action.payload, edges);
+      const { source, sourceHandle, target, targetHandle } = action.payload;
+
+      const id = `${source}:${sourceHandle}->${target}:${targetHandle}`;
+      const newEdges = ReactFlow.addEdge({ ...action.payload, id }, edges);
 
       const edgesToInput = newEdges.filter(
         (edge) => edge.target === action.payload.target && edge.targetHandle === action.payload.targetHandle,

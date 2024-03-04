@@ -1,4 +1,5 @@
 import type { NodeErrorType } from '../api/types';
+import { WorkflowSettings } from '../settings/types';
 export { NodeErrorType } from '../api/types';
 
 export enum NodeColor {
@@ -88,4 +89,25 @@ export type NodeStateData = {
   resizing?: boolean;
   collapsed?: boolean;
   tags?: string[];
+};
+
+export type ExportedNode = {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+
+  inputs: Record<string, NodeInputState>;
+  outputs: Record<string, NodeOutputState>;
+  widgets?: Record<string, NodeWidgetState>;
+  values?: Record<string, unknown>;
+  tags?: string[];
+};
+
+export type ExportedWorkflow = {
+  settings?: WorkflowSettings;
+  nodes: ExportedNode[];
+  edges: string[];
 };

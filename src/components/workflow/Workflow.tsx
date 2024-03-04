@@ -20,7 +20,7 @@ import * as uuid from 'uuid';
 
 import { useTheme } from '@mui/material';
 
-import * as apiQueries from '_state/features/api/slice';
+import * as apiSel from '_state/features/api/selector';
 import * as settingsSel from '_state/features/settings/selector';
 import { WorkflowBackground } from '_state/features/settings/types';
 import * as workflowSel from '_state/features/workflow/selector';
@@ -36,7 +36,7 @@ import { ContextMenu } from './context-menu';
 import { Controls } from './Controls';
 import { builtinEdgeTypes } from './edges';
 import { MiniMap } from './MiniMap';
-import { builtinNodes, builtinNodeTypes } from './nodes';
+import { builtinNodes } from './nodes';
 import { QuickActions } from './quick-actions';
 
 type OnEdgeUpdateStartFunc = (e: React.MouseEvent, edge: Edge<any>, handleType: HandleType) => void;
@@ -71,21 +71,24 @@ export const Workflow = () => {
     [colorMode, theme],
   );
 
-  const { data } = apiQueries.useGetObjectInfoQuery();
+  const objects = useSelector(apiSel.getObjectsInfoData);
 
   const nodeTypes = useMemo(() => {
-    if (!data) {
+    if (!objects) {
       return builtinNodes;
     }
 
-    return Object.values(data!).reduce(
-      (result, node) => ({
-        ...result,
-        [node.type]: ApiNode,
-      }),
-      { ...builtinNodes },
-    );
-  }, [data]);
+    return {
+      ...Object.values(objects!).reduce(
+        (result, node) => ({
+          ...result,
+          [node.type]: ApiNode,
+        }),
+        {},
+      ),
+      ...builtinNodes,
+    };
+  }, [objects]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
@@ -102,7 +105,7 @@ export const Workflow = () => {
 
   const handleDrop: React.DragEventHandler = useCallback(
     (e) => {
-      if (!data) {
+      if (!objects) {
         return;
       }
 
@@ -119,7 +122,7 @@ export const Workflow = () => {
         y: e.clientY,
       });
 
-      const nodeType = data[type] || builtinNodeTypes[type];
+      const nodeType = objects[type];
 
       if (!nodeType) {
         return;
@@ -140,7 +143,7 @@ export const Workflow = () => {
 
       dispatch(workflowAct.applyNodeChanges([{ type: 'add', item: newNode }]));
     },
-    [data, flow],
+    [objects, flow],
   );
 
   const handleNodesChange: OnNodesChange = useCallback(

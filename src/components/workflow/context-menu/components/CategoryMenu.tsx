@@ -21,11 +21,12 @@ import { Tree, TreeNode } from '../types';
 type CategoryProps = {
   title: string;
   id: string;
+  selectedCategory?: string;
   categories?: TreeNode<NodeType>;
   onSelect: (id: string) => void;
 };
 
-const Category: FC<CategoryProps> = ({ title, id, categories, onSelect }) => {
+const Category: FC<CategoryProps> = ({ title, id, selectedCategory, categories, onSelect }) => {
   const anchorElRef = useRef<HTMLLIElement>(null);
 
   const [isOpen, setOpen] = useState(false);
@@ -56,7 +57,7 @@ const Category: FC<CategoryProps> = ({ title, id, categories, onSelect }) => {
           }
           disablePadding
         >
-          <ListItemButton>
+          <ListItemButton selected={selectedCategory?.includes(title)}>
             <ListItemIcon>
               <FolderIcon fontSize="small" />
             </ListItemIcon>
@@ -73,6 +74,7 @@ const Category: FC<CategoryProps> = ({ title, id, categories, onSelect }) => {
                   key={nodes.__id__ || title}
                   id={nodes.__id__}
                   title={title}
+                  selectedCategory={selectedCategory}
                   categories={nodes as TreeNode<NodeType>}
                   onSelect={onSelect}
                 />
@@ -87,10 +89,11 @@ const Category: FC<CategoryProps> = ({ title, id, categories, onSelect }) => {
 
 type Props = {
   tree: Tree<NodeType>;
+  selectedCategory?: string;
   onCategorySelect: (value: string) => void;
 };
 
-export const CategoryMenu: FC<Props> = ({ tree, onCategorySelect }) => {
+export const CategoryMenu: FC<Props> = ({ tree, selectedCategory, onCategorySelect }) => {
   return (
     <List>
       {(Object.entries(tree) as [string, TreeNode<NodeType>][]).map(([title, nodes]) => {
@@ -99,6 +102,7 @@ export const CategoryMenu: FC<Props> = ({ tree, onCategorySelect }) => {
             key={nodes.__id__ || title}
             id={nodes.__id__}
             title={title}
+            selectedCategory={selectedCategory}
             categories={nodes as TreeNode<NodeType>}
             onSelect={onCategorySelect}
           />
