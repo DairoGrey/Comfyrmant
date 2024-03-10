@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { DateField } from '@mui/x-date-pickers';
+
 import { Box, Divider, Grid, Stack, Typography, useTheme } from '@mui/material';
 
 import { ErrorBoundary } from '_components/error-boundary';
@@ -11,21 +13,22 @@ import { HistoryEntryView } from './components/HistoryEntryView';
 export const HistoryPage = () => {
   const theme = useTheme();
 
-  const { data, isLoading, isSuccess } = apiQueries.useGetHistoryQuery();
+  const { isLoading: isObjectInfoLoading } = apiQueries.useGetObjectInfoQuery();
+  const { data, isLoading: isHistoryLoading, isSuccess } = apiQueries.useGetHistoryQuery();
 
   const [selected, setSelected] = useState<string | undefined>();
 
   useEffect(() => {
     if (isSuccess) {
-      setSelected(Object.values(data)[0]?.prompt[1]);
+      setSelected(Object.values(data)[0]?.info.id);
     }
   }, [isSuccess]);
 
-  if (isLoading) {
+  if (isHistoryLoading || isObjectInfoLoading) {
     return <div>Loading...</div>;
   }
 
-  const entries = Object.values(data || {}).sort((a, b) => a.prompt[0] - b.prompt[0]);
+  const entries = Object.values(data || {}).sort((a, b) => a.info.number - b.info.number);
   const selectedItem = data && selected ? data[selected] : undefined;
 
   return (
@@ -35,7 +38,7 @@ export const HistoryPage = () => {
           sx={{ overflowY: 'auto', height: '100%', borderRight: '1px solid', borderRightColor: theme.palette.divider }}
         >
           <ErrorBoundary>
-            <HistoryEntriesList entries={entries} selected={selected} onSelect={(id: string) => setSelected(id)} />
+            <HistoryEntriesList entries={entries} selected={selected} onSelect={(id) => setSelected(id)} />
           </ErrorBoundary>
         </Box>
       </Grid>
@@ -65,6 +68,9 @@ export const HistoryAppBarWidgets = () => {
             Counter
           </Typography>
         </Stack>
+        <Box display="flex" alignItems="center">
+          <DateField size="small" />
+        </Box>
       </Stack>
     </>
   );

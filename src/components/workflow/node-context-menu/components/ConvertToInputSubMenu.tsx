@@ -13,7 +13,7 @@ import * as workflowAct from '_state/features/workflow/slice';
 import { NodeInputState, NodeWidgetState } from '_state/features/workflow/types';
 import { useColorMode } from '_theme';
 
-import { colorByType } from '../../../utils/colorByType';
+import { colorByType } from '../../utils/colorByType';
 
 type ItemProps = {
   icon: React.ReactNode;

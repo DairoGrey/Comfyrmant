@@ -2,12 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import * as uuid from 'uuid';
 
 type Workspace = {
-  id: string;
-  title: string;
-  settings: Record<string, unknown>;
-  nodes: unknown[];
-  edges: unknown[];
-  previewUrl?: string;
+  settings: unknown;
+  workflow: unknown;
 };
 
 type WorkspacesState = Record<string, Workspace>;
@@ -18,20 +14,13 @@ const workspacesSlice = createSlice({
   name: 'workspaces',
   initialState,
   reducers: {
-    create(
-      state,
-      action: PayloadAction<{ title: string; settings: any; nodes: any[]; edges: any[]; previewUrl?: string }>,
-    ) {
-      const { title, settings, nodes, edges, previewUrl } = action.payload;
+    create(state, action: PayloadAction<{ settings: unknown; workflow: unknown }>) {
+      const { settings, workflow } = action.payload;
 
       const id = uuid.v4();
       state[id] = {
-        id,
-        title,
         settings,
-        nodes,
-        edges,
-        previewUrl,
+        workflow,
       };
     },
     remove(state, action: PayloadAction<string>) {

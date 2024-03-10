@@ -6,14 +6,19 @@ import { NodeInputState, NodeOutputState, NodeWidgetState } from '_state/feature
 
 type Props = {
   widget?: NodeWidgetState;
+
   input?: NodeInputState;
+
   output?: NodeOutputState;
 
   value?: unknown;
+
   onChange: (value: unknown) => void;
+
   onOptionsChange: (options: Record<string, unknown>) => void;
 };
 
 export const NoteEditorWidget: FC<Props> = memo(({ value, onChange }) => {
   return <MarkdownEditor value={value as string} onChange={onChange} />;
 });
+NoteEditorWidget.displayName = 'NoteEditorWidget';

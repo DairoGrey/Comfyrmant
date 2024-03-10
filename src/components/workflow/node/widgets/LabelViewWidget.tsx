@@ -20,3 +20,4 @@ export const LabelViewWidget: FC<Props> = memo(({ value }) => {
 
   return <Typography>{value.toString()}</Typography>;
 });
+LabelViewWidget.displayName = 'LabelViewWidget';

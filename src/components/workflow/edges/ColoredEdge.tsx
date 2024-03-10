@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, memo, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { BaseEdge, EdgeProps } from 'reactflow';
 
@@ -10,7 +10,7 @@ import { useColorMode } from '_theme';
 import { colorByType } from '../utils/colorByType';
 import { EDGE_TYPE } from '../utils/edgeTypes';
 
-export const ColoredEdge: FC<EdgeProps> = ({ id, selected, ...props }) => {
+export const ColoredEdge: FC<EdgeProps> = memo(({ id, selected, ...props }) => {
   const colorMode = useColorMode();
 
   const edgeType = useSelector(settingsSel.getWorkflowEdgeType);
@@ -26,6 +26,7 @@ export const ColoredEdge: FC<EdgeProps> = ({ id, selected, ...props }) => {
   );
 
   const output = useSelector(getOutput);
+
   const color = output ? colorByType(output.type, colorMode) : undefined;
 
   const style = useMemo(() => ({ stroke: color, strokeWidth: selected ? 3 : 2 }), [selected]);
@@ -35,4 +36,5 @@ export const ColoredEdge: FC<EdgeProps> = ({ id, selected, ...props }) => {
       <BaseEdge id={id} path={path} style={style} />
     </>
   );
-};
+});
+ColoredEdge.displayName = 'ColoredEdge';

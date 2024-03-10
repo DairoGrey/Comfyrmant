@@ -11,6 +11,7 @@ import { workspacesSaga } from '_state/features/workspaces/saga';
 export function* rootSaga() {
   const sagas: (() => Generator<never, void, unknown>)[] = [
     apiSaga,
+    // @ts-expect-error return type
     blobsSaga,
     // @ts-expect-error return type
     hubSaga,

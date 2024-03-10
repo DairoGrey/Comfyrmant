@@ -1,14 +1,14 @@
 import { FC, memo, useCallback } from 'react';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { NodeProps } from 'reactflow';
+import { useDispatch } from 'react-redux';
+import { NodeProps, useReactFlow } from 'reactflow';
 
-import { Divider, Paper, Stack } from '@mui/material';
+import { Backdrop, Divider, Paper, Stack, Typography, useTheme } from '@mui/material';
 
-import * as workflowSel from '_state/features/workflow/selector';
+import LockIcon from '@mui/icons-material/Lock';
+
 import * as workflowAct from '_state/features/workflow/slice';
 import { NodeStateData } from '_state/features/workflow/types';
-import { RootState } from '_state/store';
 import { useColorMode } from '_theme';
 
 import { backgroundByType } from '../utils/backgroundColor';
@@ -23,23 +23,29 @@ import { Results, Widgets } from './Widgets';
 
 export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
   const { id, data, isConnectable, selected } = props;
-  const { inputs, outputs, widgets, errors, tags } = data;
+
+  const {
+    inputs,
+    outputs,
+    widgets,
+    errors,
+    tags,
+    resizing = false,
+    collapsed = false,
+    locked = false,
+    bypass = false,
+    color: nodeColor,
+  } = data;
   const { title, isOutput } = data.nodeType;
 
   const hasWidgets = widgets ? Object.keys(widgets).length > 0 : false;
   const hasPins = Object.values(inputs).filter((input) => !input.hidden).length > 0 || Object.keys(outputs).length > 0;
 
+  const theme = useTheme();
   const colorMode = useColorMode();
+  const flow = useReactFlow();
 
   const dispatch = useDispatch();
-
-  const getNodeColor = useCallback((state: RootState) => workflowSel.getNodeColor(state, id), [id]);
-  const getNodeResizing = useCallback((state: RootState) => workflowSel.getNodeResizing(state, id), [id]);
-  const getNodeCollapsed = useCallback((state: RootState) => workflowSel.getNodeCollapsed(state, id), [id]);
-
-  const nodeColor = useSelector(getNodeColor);
-  const resizing = useSelector(getNodeResizing);
-  const collapsed = useSelector(getNodeCollapsed);
 
   const backgroundColor = nodeColor ? backgroundByType(nodeColor, colorMode) : undefined;
 
@@ -58,23 +64,53 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
     [id],
   );
 
+  const handleDelete = useCallback(() => {
+    flow.deleteElements({ nodes: [{ id: id }] });
+  }, [id, flow]);
+
+  const handleClone = useCallback(() => {
+    dispatch(workflowAct.cloneNode(id));
+  }, [id]);
+
+  const handleLock = useCallback(() => {
+    dispatch(workflowAct.toggleNodeLocked(id));
+  }, [id]);
+
   return (
     <>
       <Resizer visible={resizing} />
 
-      <Toolbar resizing={resizing} collapsed={collapsed} onResize={handleResize} onCollapse={handleCollapse} />
+      <Toolbar
+        resizing={resizing}
+        collapsed={collapsed}
+        locked={locked}
+        onDelete={handleDelete}
+        onClone={handleClone}
+        onResize={handleResize}
+        onCollapse={handleCollapse}
+        onLock={handleLock}
+      />
 
       <Stack
         component={Paper}
-        elevation={selected ? 6 : 3}
+        variant={locked ? 'outlined' : 'elevation'}
+        elevation={locked ? 0 : selected ? 6 : 3}
         direction="column"
         flex={1}
         height="100%"
-        sx={{ backgroundColor, userSelect: 'none' }}
+        sx={{
+          backgroundColor,
+          border: '1px solid',
+          borderColor: locked ? theme.palette.divider : 'transparent',
+          userSelect: 'none',
+        }}
       >
-        <Header id={id} title={title} inputs={inputs} widgets={widgets}>
-          {tags && <Tags tags={tags} onDelete={handleTagDelete} />}
-        </Header>
+        <Header
+          id={id}
+          title={title}
+          tags={tags && <Tags tags={tags} onDelete={handleTagDelete} />}
+          lockStatus={locked ? <LockIcon color="secondary" /> : undefined}
+        />
         {hasPins && (
           <>
             <Divider />
@@ -93,9 +129,17 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
             <Results id={id} inputs={inputs} />
           </>
         )}
+        <Backdrop open={bypass} sx={{ borderRadius: 1 }}>
+          <Stack alignItems="center" justifyContent="center">
+            <Typography color="common.white" variant="button" fontSize={24}>
+              BYPASS
+            </Typography>
+          </Stack>
+        </Backdrop>
       </Stack>
 
       <Errors id={id} errors={errors} />
     </>
   );
 });
+Node.displayName = 'Node';

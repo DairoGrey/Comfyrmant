@@ -9,6 +9,7 @@ import * as uuid from 'uuid';
 import { Box, ClickAwayListener, Drawer, Grid, Stack } from '@mui/material';
 
 import * as apiSel from '_state/features/api/selector';
+import { builtinNodeData } from '_state/features/workflow/data';
 import { NodeStateData } from '_state/features/workflow/types';
 
 import { CategoryMenu } from './components/CategoryMenu';
@@ -17,11 +18,11 @@ import { useNodeCategoryTree } from './hooks/useNodeCategoryTree';
 
 type Props = {
   isOpen: boolean;
-  position: any;
+  position: { x: number; y: number } | null;
   onClose: () => void;
 };
 
-export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
+export const PaneContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
   const flow = useReactFlow<NodeStateData>();
 
   const nodes = useSelector(apiSel.getObjectsInfoData);
@@ -42,7 +43,7 @@ export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
     (e: React.MouseEvent, type: string) => {
       const nodeType = nodes?.[type];
 
-      if (!nodeType) {
+      if (!nodeType || !position) {
         return;
       }
 
@@ -52,7 +53,7 @@ export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
           nodeType: { ...nodeType },
           inputs: { ...nodeType.inputs },
           outputs: { ...nodeType.outputs },
-          widgets: {},
+          widgets: builtinNodeData[type]?.widgets ?? {},
           values: {},
         },
         type: nodeType.type,
@@ -122,3 +123,4 @@ export const ContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) => {
     </ClickAwayListener>
   );
 });
+PaneContextMenu.displayName = 'PaneContextMenu';

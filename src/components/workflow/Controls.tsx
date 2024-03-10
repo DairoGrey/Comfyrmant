@@ -4,13 +4,14 @@ import { Panel, ReactFlowState, useReactFlow, useStore, useStoreApi } from 'reac
 
 import { shallow } from 'zustand/shallow';
 
-import { Divider, IconButton, Paper, Stack, Tooltip } from '@mui/material';
+import { Divider, IconButton, Paper, Stack, SvgIcon, Tooltip } from '@mui/material';
 
 import AddIcon from '@mui/icons-material/Add';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import RemoveIcon from '@mui/icons-material/Remove';
+import TimesOneMobiledataIcon from '@mui/icons-material/TimesOneMobiledata';
 import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 
@@ -20,11 +21,12 @@ const selector = (s: ReactFlowState) => ({
   canZoomOut: s.transform[2] > s.minZoom,
   maxZoom: s.maxZoom,
   minZoom: s.minZoom,
+  zoom: s.transform[2],
 });
 
 export const Controls: FC = memo(() => {
   const store = useStoreApi();
-  const { isInteractive, canZoomIn, canZoomOut, maxZoom, minZoom } = useStore(selector, shallow);
+  const { isInteractive, canZoomIn, canZoomOut, maxZoom, minZoom, zoom } = useStore(selector, shallow);
   const flow = useReactFlow();
 
   const handleZoomIn = useCallback(() => {
@@ -43,6 +45,10 @@ export const Controls: FC = memo(() => {
     flow.zoomTo(minZoom);
   }, [flow, minZoom]);
 
+  const handleResetZoom = useCallback(() => {
+    flow.zoomTo(1);
+  }, [flow]);
+
   const handleFitView = useCallback(() => {
     flow.fitView();
   }, [flow]);
@@ -59,6 +65,23 @@ export const Controls: FC = memo(() => {
     <Panel position="bottom-left">
       <Stack component={Paper} variant="outlined" sx={{ '& .MuiIconButton-root': { borderRadius: 0 } }} direction="row">
         <Stack>
+          <IconButton disabled>
+            <SvgIcon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                focusable={false}
+                aria-hidden={true}
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                stroke="none"
+              >
+                <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="0.75rem">
+                  {zoom.toFixed(2)}
+                </text>
+              </svg>
+            </SvgIcon>
+          </IconButton>
+          <Divider />
           <Tooltip title="Zoom max" placement="right">
             <span>
               <IconButton disabled={!canZoomIn} onClick={handleZoomMax}>
@@ -83,6 +106,14 @@ export const Controls: FC = memo(() => {
         </Stack>
         <Divider flexItem orientation="vertical" />
         <Stack>
+          <Tooltip title="Reset zoom" placement="right">
+            <span>
+              <IconButton onClick={handleResetZoom}>
+                <TimesOneMobiledataIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Divider />
           <Tooltip title="Zoom in" placement="right">
             <span>
               <IconButton disabled={!canZoomIn} onClick={handleZoomIn}>
@@ -100,10 +131,13 @@ export const Controls: FC = memo(() => {
           </Tooltip>
           <Divider />
           <Tooltip title={isInteractive ? 'Lock' : 'Unlock'} placement="right">
-            <IconButton onClick={handleLock}>{isInteractive ? <LockOpenIcon /> : <LockIcon />}</IconButton>
+            <IconButton color={isInteractive ? 'default' : 'secondary'} onClick={handleLock}>
+              {isInteractive ? <LockOpenIcon /> : <LockIcon />}
+            </IconButton>
           </Tooltip>
         </Stack>
       </Stack>
     </Panel>
   );
 });
+Controls.displayName = 'Controls';

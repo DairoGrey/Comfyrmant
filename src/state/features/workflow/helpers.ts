@@ -59,7 +59,7 @@ export const buildPrompt = (nodes: Node<NodeStateData>[], edges: Edge[]): Record
   };
 
   const data: Record<string | number, PromptNodeData> = nodes
-    .filter((node) => node.data.nodeType.category !== 'primitive')
+    .filter((node) => !['primitive', 'utils'].includes(node.data.nodeType.category))
     .reduce((result, node) => {
       const nodeData = node.data;
 

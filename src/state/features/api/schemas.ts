@@ -1,10 +1,10 @@
 import Ajv, { JSONSchemaType } from 'ajv';
 
-import { ComponentResponse, ComponentsResponse } from './types';
+import { ObjectInfoApiResponse, ObjectItemApiResponse } from './types';
 
 const ajv = new Ajv();
 
-const ComponentResponseSchema: JSONSchemaType<ComponentResponse> = {
+const ObjectItemApiResponseSchema: JSONSchemaType<ObjectItemApiResponse> = {
   type: 'object',
   properties: {
     category: { type: 'string' },
@@ -45,12 +45,12 @@ const ComponentResponseSchema: JSONSchemaType<ComponentResponse> = {
   additionalProperties: false,
 };
 
-export const validateComponentResponse = ajv.compile(ComponentResponseSchema);
+export const validateObjectItemApiResponse = ajv.compile(ObjectItemApiResponseSchema);
 
-const ComponentsResponseSchema: JSONSchemaType<ComponentsResponse> = {
+const ObjectInfoApiResponseSchema: JSONSchemaType<ObjectInfoApiResponse> = {
   type: 'object',
   required: [],
-  additionalProperties: ComponentResponseSchema,
+  additionalProperties: ObjectItemApiResponseSchema,
 };
 
-export const validateComponentsResponse = ajv.compile(ComponentsResponseSchema);
+export const validateObjectInfoApiResponse = ajv.compile(ObjectInfoApiResponseSchema);

@@ -1,13 +1,16 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from '_state/store';
+import { firstFree, secondFree } from '_state/utils';
 
 import slice, { PromptOutput, PromptState } from './slice';
 
 const getHub = (state: RootState) => state[slice.name];
+
 const getHubStatus = createSelector(getHub, (hub) => hub.status);
 
 export const getClientId = createSelector(getHubStatus, (status) => status.sid);
+
 export const getRemainingQueue = createSelector(getHubStatus, (status) => status.queue.remaining);
 
 export const getExecutedPrompts = createSelector(getHub, (hub) => {
@@ -15,7 +18,7 @@ export const getExecutedPrompts = createSelector(getHub, (hub) => {
 });
 
 export const getProgress: (state: RootState, id: string) => [boolean, { steps: number; currentStep: number } | null] =
-  createSelector([getHub, (state, id: string) => id], (hub, id) => {
+  createSelector([getHub, firstFree<string>], (hub, id) => {
     const executingPrompt = hub.executingPrompt;
 
     if (!executingPrompt) {
@@ -36,8 +39,8 @@ export const getProgress: (state: RootState, id: string) => [boolean, { steps: n
   });
 
 export const getOutputValueFromLatestPrompt = createSelector(
-  [getHub, (state, id: string, input: keyof PromptOutput) => [id, input] as const],
-  (hub, [id, input]) => {
+  [getHub, firstFree<string>, secondFree<keyof PromptOutput>],
+  (hub, id, input) => {
     const get = (promptId?: string) => {
       if (!promptId) {
         return;
@@ -52,7 +55,9 @@ export const getOutputValueFromLatestPrompt = createSelector(
       if (!prompt.outputNodes?.includes(id)) {
         if (prompt.cachedNodes?.includes(id)) {
           const n = prompt.number;
+
           const prompts = Object.values(hub.prompts)
+
             .reduce((result, prompt) => {
               if (prompt.number < n && prompt.outputNodes?.includes(id) && prompt.outputs[id]) {
                 return [...result, prompt];
@@ -60,6 +65,7 @@ export const getOutputValueFromLatestPrompt = createSelector(
 
               return result;
             }, [] as PromptState[])
+
             .sort((a, b) => b.number - a.number);
 
           if (!prompts.length) {

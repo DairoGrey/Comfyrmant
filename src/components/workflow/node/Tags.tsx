@@ -19,3 +19,4 @@ export const Tags: FC<Props> = memo(({ tags, onDelete }) => {
     </Stack>
   );
 });
+Tags.displayName = 'Tags';

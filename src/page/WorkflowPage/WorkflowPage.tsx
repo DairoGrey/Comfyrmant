@@ -10,11 +10,11 @@ import { Workflow } from '_components/workflow';
 import * as apiQueries from '_state/features/api/slice';
 import * as hubSel from '_state/features/hub/selector';
 
-import { ExportToFileButton } from './WorkflowPage/components/ExportToFileButton';
-import { ImportFromFileButton } from './WorkflowPage/components/ImportFromFileButton';
-import { QueuePromptButton } from './WorkflowPage/components/QueuePromptButton';
-import { RedoButton } from './WorkflowPage/components/RedoButton';
-import { UndoButton } from './WorkflowPage/components/UndoButton';
+import { ExportToFileButton } from './components/ExportToFileButton';
+import { ImportFromFileButton } from './components/ImportFromFileButton';
+import { QueuePromptButton } from './components/QueuePromptButton';
+import { RedoButton } from './components/RedoButton';
+import { UndoButton } from './components/UndoButton';
 
 export const WorkflowPage = () => {
   const { isLoading } = apiQueries.useGetObjectInfoQuery();

@@ -30,3 +30,4 @@ export const PinsView: FC<Props> = memo(({ inputs, outputs }) => {
     </Stack>
   );
 });
+PinsView.displayName = 'PinsView';

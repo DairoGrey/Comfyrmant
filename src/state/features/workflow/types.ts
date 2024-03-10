@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react';
+
 import type { NodeErrorType } from '../api/types';
 import { WorkflowSettings } from '../settings/types';
 export { NodeErrorType } from '../api/types';
@@ -88,6 +90,8 @@ export type NodeStateData = {
   color?: NodeColor;
   resizing?: boolean;
   collapsed?: boolean;
+  locked?: boolean;
+  bypass?: boolean;
   tags?: string[];
 };
 
@@ -99,11 +103,14 @@ export type ExportedNode = {
   width?: number;
   height?: number;
 
+  style?: CSSProperties;
+
   inputs: Record<string, NodeInputState>;
   outputs: Record<string, NodeOutputState>;
   widgets?: Record<string, NodeWidgetState>;
   values?: Record<string, unknown>;
   tags?: string[];
+  color?: NodeColor;
 };
 
 export type ExportedWorkflow = {

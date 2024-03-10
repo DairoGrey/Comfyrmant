@@ -67,6 +67,7 @@ const Handle: FC<HandleProps & ExtraProps> = memo(({ label, color, children, ...
     </Stack>
   );
 });
+Handle.displayName = 'Handle';
 
 type InputProps = {
   input: NodeInput;
