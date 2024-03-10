@@ -5,7 +5,7 @@ export const DISPLAY_NODE_DATA: NodeStateData = {
     type: 'Display',
     title: 'Display',
     category: 'utils',
-    isOutput: false,
+    isOutput: true,
     inputs: {
       value: {
         index: 0,
@@ -25,13 +25,7 @@ export const DISPLAY_NODE_DATA: NodeStateData = {
     },
   },
   outputs: {},
-  widgets: {
-    value: {
-      name: 'value',
-      type: 'input',
-      id: 'value',
-    },
-  },
+  widgets: {},
 };
 
 export const INTEGER_NODE_DATA: NodeStateData = {
@@ -146,4 +140,11 @@ export const builtinNodeTypes = {
   [INTEGER_NODE_DATA.nodeType.type]: INTEGER_NODE_DATA.nodeType,
   [STRING_NODE_DATA.nodeType.type]: STRING_NODE_DATA.nodeType,
   [NOTE_NODE_DATA.nodeType.type]: NOTE_NODE_DATA.nodeType,
+};
+
+export const builtinNodeData = {
+  [DISPLAY_NODE_DATA.nodeType.type]: DISPLAY_NODE_DATA,
+  [INTEGER_NODE_DATA.nodeType.type]: INTEGER_NODE_DATA,
+  [STRING_NODE_DATA.nodeType.type]: STRING_NODE_DATA,
+  [NOTE_NODE_DATA.nodeType.type]: NOTE_NODE_DATA,
 };

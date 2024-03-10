@@ -23,6 +23,7 @@ import { useTheme } from '@mui/material';
 import * as apiSel from '_state/features/api/selector';
 import * as settingsSel from '_state/features/settings/selector';
 import { WorkflowBackground } from '_state/features/settings/types';
+import { builtinNodeData } from '_state/features/workflow/data';
 import * as workflowSel from '_state/features/workflow/selector';
 import * as workflowAct from '_state/features/workflow/slice';
 import { NodeStateData } from '_state/features/workflow/types';
@@ -32,11 +33,12 @@ import { useColorMode } from '_theme';
 import { ApiNode } from './nodes/ApiNode';
 import { createMiniMapNodeColorGetter } from './utils/backgroundColor';
 import { ConnectionLine } from './ConnectionLine';
-import { ContextMenu } from './context-menu';
 import { Controls } from './Controls';
 import { builtinEdgeTypes } from './edges';
+import { Info } from './Info';
 import { MiniMap } from './MiniMap';
-import { builtinNodes } from './nodes';
+import { NodeContextMenu } from './node-context-menu';
+import { PaneContextMenu } from './pane-context-menu';
 import { QuickActions } from './quick-actions';
 
 type OnEdgeUpdateStartFunc = (e: React.MouseEvent, edge: Edge<any>, handleType: HandleType) => void;
@@ -61,8 +63,10 @@ export const Workflow = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [position, setPosition] = useState<any>(null);
+  const [isPaneMenuOpen, setIsPaneMenuOpen] = useState(false);
+  const [isNodeMenuOpen, setIsNodeMenuOpen] = useState(false);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const [node, setNode] = useState<Node<NodeStateData> | null>(null);
 
   const edgeUpdateSuccessful = useRef(false);
 
@@ -75,7 +79,7 @@ export const Workflow = () => {
 
   const nodeTypes = useMemo(() => {
     if (!objects) {
-      return builtinNodes;
+      return {};
     }
 
     return {
@@ -86,13 +90,17 @@ export const Workflow = () => {
         }),
         {},
       ),
-      ...builtinNodes,
     };
   }, [objects]);
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
+  const handlePaneMenuClose = useCallback(() => {
+    setIsPaneMenuOpen(false);
+  }, [setIsPaneMenuOpen]);
+
+  const handleNodeMenuClose = useCallback(() => {
+    setIsNodeMenuOpen(false);
+    setNode(null);
+  }, [setIsNodeMenuOpen, setNode]);
 
   const handleNodeColor = useCallback((node: Node<NodeStateData>) => getNodeColor(node.data.color), [getNodeColor]);
 
@@ -136,7 +144,7 @@ export const Workflow = () => {
           nodeType: { ...nodeType },
           inputs: { ...nodeType.inputs },
           outputs: { ...nodeType.outputs },
-          widgets: {},
+          widgets: builtinNodeData[type]?.widgets ?? {},
           values: {},
         },
       };
@@ -175,7 +183,7 @@ export const Workflow = () => {
 
   const handleConnect: OnConnect = useCallback((connection) => dispatch(workflowAct.addEdge(connection)), []);
 
-  const handleContextMenu = useCallback(
+  const handlePaneContextMenu = useCallback(
     (event: React.MouseEvent) => {
       event.nativeEvent.preventDefault();
 
@@ -184,9 +192,24 @@ export const Workflow = () => {
         y: event.clientY,
       });
 
-      setIsOpen(true);
+      setIsPaneMenuOpen(true);
     },
-    [setIsOpen],
+    [setIsPaneMenuOpen],
+  );
+
+  const handleNodeContextMenu = useCallback(
+    (event: React.MouseEvent, node: Node<NodeStateData>) => {
+      event.nativeEvent.preventDefault();
+
+      setPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      setNode(node);
+      setIsNodeMenuOpen(true);
+    },
+    [setIsNodeMenuOpen],
   );
 
   const isValidConnection: IsValidConnection = useCallback(
@@ -225,7 +248,8 @@ export const Workflow = () => {
         onConnect={handleConnect}
         onEdgeUpdateStart={handleEdgeUpdateStart}
         onEdgeUpdateEnd={handleEdgeUpdateEnd}
-        onPaneContextMenu={handleContextMenu}
+        onPaneContextMenu={handlePaneContextMenu}
+        onNodeContextMenu={handleNodeContextMenu}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         isValidConnection={isValidConnection}
@@ -244,11 +268,13 @@ export const Workflow = () => {
           size={background === WorkflowBackground.Dots ? 2 : snapGrid / 3}
           lineWidth={1}
         />
-        <MiniMap nodeColor={handleNodeColor} />
-        <Controls />
+        <Info />
         <QuickActions />
+        <Controls />
+        <MiniMap nodeColor={handleNodeColor} />
       </ReactFlow>
-      <ContextMenu isOpen={isOpen} position={position} onClose={handleClose} />
+      <PaneContextMenu isOpen={isPaneMenuOpen} position={position} onClose={handlePaneMenuClose} />
+      <NodeContextMenu isOpen={isNodeMenuOpen} position={position} node={node} onClose={handleNodeMenuClose} />
     </>
   );
 };

@@ -1,9 +1,15 @@
 import React from 'react';
 
-import { Divider, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
+
+import { WorkflowDraftCard } from './components/WorkflowDraftCard';
 
 export const WorkspacesPage = () => {
-  return <div>Hello</div>;
+  return (
+    <Box p={2} flexWrap="wrap">
+      <WorkflowDraftCard />
+    </Box>
+  );
 };
 
 export const WorkspacesAppBarWidgets = () => {

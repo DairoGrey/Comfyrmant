@@ -61,3 +61,4 @@ export const SelectFieldWidget: FC<Props> = memo(({ value, values, input, output
     </ClickAwayListener>
   );
 });
+SelectFieldWidget.displayName = 'SelectFieldWidget';

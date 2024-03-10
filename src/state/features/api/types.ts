@@ -17,8 +17,8 @@ export type QueueResponse = {
   queue_pending: QueueItem[];
 };
 
-export type HistoryItemResponse = {
-  outputs: Record<string, Record<string, unknown>>;
+export type HistoryItemApiResponse = {
+  outputs: Record<string, Record<'images', ImageOutputResponse[]>>;
   prompt: QueueItem;
   status: {
     status_str: string;
@@ -27,9 +27,9 @@ export type HistoryItemResponse = {
   };
 };
 
-export type HistoryResponse = Record<string, HistoryItemResponse>;
+export type HistoryApiResponse = Record<string, HistoryItemApiResponse>;
 
-export type ComponentResponse = {
+export type ObjectItemApiResponse = {
   category: string;
   description: string;
   display_name: string;
@@ -43,8 +43,8 @@ export type ComponentResponse = {
   output_node: boolean;
 };
 
-export type ComponentsResponse = {
-  [k: string]: ComponentResponse;
+export type ObjectInfoApiResponse = {
+  [k: string]: ObjectItemApiResponse;
 };
 
 export enum NodeErrorType {
@@ -93,5 +93,5 @@ export type PromptNodeData = {
 
 export type PromptRequest = {
   client_id: string;
-  prompt: Record<string | number, PromptNodeData>;
+  prompt: Record<string, PromptNodeData>;
 };

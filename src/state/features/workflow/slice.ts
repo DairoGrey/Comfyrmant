@@ -10,6 +10,7 @@ import * as reducers from './reducers';
 
 export type WorkflowState = {
   id: string;
+  title?: string;
   nodes: Node<NodeStateData>[];
   edges: Edge[];
   changes: {
@@ -61,10 +62,14 @@ export const {
   resetNodesColor,
   toggleNodeCollapsed,
   toggleNodeResizing,
+  toggleNodeLocked,
+  toggleNodeBypass,
   addNodeTag,
   removeNodeTag,
   addNodeError,
   resolveNodeError,
+  updateTitle,
+  cloneNode,
   undo,
   redo,
 } = workflowSlice.actions;

@@ -32,3 +32,4 @@ export const Pins: FC<Props> = memo(({ isConnectable, inputs, outputs }) => {
     </Stack>
   );
 });
+Pins.displayName = 'Pins';

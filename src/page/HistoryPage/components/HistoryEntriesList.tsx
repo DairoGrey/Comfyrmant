@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 
 import { Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, useTheme } from '@mui/material';
 
-import { HistoryItemResponse } from '_state/features/api/types';
+import { HistoryEntry } from '_state/features/history/types';
 
 type Props = {
-  entries: HistoryItemResponse[];
+  entries: HistoryEntry[];
   selected?: string;
   onSelect: (id: string) => void;
 };
@@ -17,12 +17,12 @@ export const HistoryEntriesList: FC<Props> = ({ entries, selected, onSelect }) =
     <List>
       {entries.map((entry) => (
         <ListItem
-          key={entry.prompt[1]}
+          key={entry.info.id}
           onClick={() => {
-            onSelect(entry.prompt[1]);
+            onSelect(entry.info.id);
           }}
         >
-          <ListItemButton selected={selected === entry.prompt[1]}>
+          <ListItemButton selected={selected === entry.info.id}>
             <ListItemAvatar>
               <Avatar
                 sx={{
@@ -30,11 +30,11 @@ export const HistoryEntriesList: FC<Props> = ({ entries, selected, onSelect }) =
                     entry.status.status_str === 'success' ? theme.palette.success.main : theme.palette.error.main,
                 }}
               >
-                {entry.prompt[0]}
+                {entry.info.number}
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={entry.prompt[1]}
+              primary={entry.info.id}
               primaryTypographyProps={{ noWrap: true }}
               secondary={entry.status.status_str}
             />

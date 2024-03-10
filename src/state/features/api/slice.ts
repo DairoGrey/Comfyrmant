@@ -3,9 +3,11 @@ import axios from 'axios';
 
 import { NodeTypes } from '_state/features/workflow/types';
 
-import { validateComponentsResponse } from './schemas';
+import { HistoryEntries } from '../history/types';
+
+import { validateObjectInfoApiResponse } from './schemas';
 import { transformHistory, transformObjectInfo } from './transform';
-import { HistoryResponse, PromptRequest, PromptResponse } from './types';
+import { PromptRequest, PromptResponse } from './types';
 
 const base = axios.create({
   baseURL: location.toString(),
@@ -51,11 +53,11 @@ const apiSlice = createApi({
       query: () => 'object_info',
       providesTags: [{ type: 'nodes', id: 'list' }],
       extraOptions: {
-        validate: validateComponentsResponse,
+        validate: validateObjectInfoApiResponse,
       },
       transformResponse: transformObjectInfo,
     }),
-    getHistory: builder.query<HistoryResponse, void>({
+    getHistory: builder.query<HistoryEntries, void>({
       query: () => 'history',
       providesTags: [{ type: 'history', id: 'list' }],
       extraOptions: {
@@ -63,7 +65,7 @@ const apiSlice = createApi({
       },
       transformResponse: transformHistory,
     }),
-    getHistoryById: builder.query<HistoryResponse, string>({
+    getHistoryById: builder.query<HistoryEntries, string>({
       query: (id: string) => `history/${id}`,
       providesTags: (res, err, id) => [{ type: 'history', id }],
       extraOptions: {

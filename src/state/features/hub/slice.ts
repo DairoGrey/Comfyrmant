@@ -38,6 +38,7 @@ type HubState = {
 
 const initialState: HubState = {
   status: {
+    sid: sessionStorage.getItem('clientId') || undefined,
     queue: {
       remaining: 0,
     },

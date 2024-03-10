@@ -52,7 +52,7 @@ export const inputWidgetByType = (widget: NodeWidgetState, inputs: Record<string
 };
 
 const RESULT_WIDGET_TYPE: Record<string, any> = {
-  STRING: LabelViewWidget,
+  GENERIC: LabelViewWidget,
   IMAGE: ImagesViewWidget,
 };
 

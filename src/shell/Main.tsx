@@ -59,7 +59,7 @@ const RootLayout = () => {
             <Routes>
               <Route path={ROUTES.workflow} Component={WorkflowAppBarWidgets} />
               <Route path={ROUTES.history} Component={HistoryAppBarWidgets} />
-              <Route index path={ROUTES.workspaces} Component={WorkspacesAppBarWidgets} />
+              <Route path={ROUTES.workspaces} Component={WorkspacesAppBarWidgets} />
             </Routes>
           </AppBar>
 

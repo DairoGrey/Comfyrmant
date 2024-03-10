@@ -91,12 +91,19 @@ type ResultWidgetProps = {
 
 const ResultWidget: FC<ResultWidgetProps> = ({ nodeId, input }) => {
   const pinId = input.name;
+  const type = input.type;
 
   const [Widget, props] = resultWidgetByType(input);
 
   const getValue = useCallback(
-    (state: RootState) => hubSel.getOutputValueFromLatestPrompt(state, nodeId, pinId as any),
-    [nodeId, pinId],
+    (state: RootState) => {
+      if (type === 'GENERIC') {
+        return workflowSel.getInputValueFromConnectedSourceNode(state, nodeId, pinId as any);
+      }
+
+      return hubSel.getOutputValueFromLatestPrompt(state, nodeId, pinId as any);
+    },
+    [nodeId, pinId, type],
   );
 
   const value = useSelector(getValue);
@@ -130,6 +137,7 @@ export const Widgets: FC<Props> = memo(({ id, widgets, inputs, outputs }) => {
     </Stack>
   );
 });
+Widgets.displayName = 'Widgets';
 
 type ResultsProps = {
   id: string;
@@ -145,3 +153,4 @@ export const Results: FC<ResultsProps> = memo(({ id, inputs }) => {
     </Stack>
   );
 });
+Results.displayName = 'Results';

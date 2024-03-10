@@ -32,3 +32,4 @@ export const ImagesViewWidget: FC<Props> = memo(({ value }) => {
     </Stack>
   );
 });
+ImagesViewWidget.displayName = 'ImagesViewWidget';

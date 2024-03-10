@@ -1,11 +1,11 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ImageOutputResponse } from '../api/types';
 
 import { BlobType } from './types';
 
 type BlobsState = {
-  byImageType: Record<ImageOutputResponse['type'], Record<string, unknown>>;
+  byImage: Record<string, Record<string, unknown>>;
   byType: Record<BlobType, Record<string, unknown>>;
   byId: Record<string, Record<string, unknown>>;
   urls: Record<string, string>;
@@ -17,31 +17,31 @@ const initialState: BlobsState = {
     [BlobType.Output]: {},
   },
   byId: {},
-  byImageType: {
-    temp: {},
-    output: {},
-  },
+  byImage: {},
   urls: {},
 };
+
+export const loadBlob = createAction<ImageOutputResponse>('@blobs/loadBlob');
+export const unloadBlob = createAction<ImageOutputResponse>('@blobs/unloadBlob');
 
 const blobsSlice = createSlice({
   name: '@blobs',
   initialState,
   reducers: {
-    registerBlob(state, action: PayloadAction<{ id: string; imageType: ImageOutputResponse['type']; type: BlobType }>) {
-      const { id, imageType, type } = action.payload;
+    registerBlob(state, action: PayloadAction<{ id: string; image: string; type: BlobType }>) {
+      const { id, image, type } = action.payload;
 
-      const record = { id, image: { type: imageType }, type };
+      const record = { id, image, type };
 
       state.byId[id] = record;
-      state.byImageType[imageType][id] = record;
+      state.byImage[image] = record;
       state.byType[type][id] = record;
     },
-    removeBlob(state, action: PayloadAction<{ id: string; imageType: ImageOutputResponse['type']; type: BlobType }>) {
-      const { id, imageType, type } = action.payload;
+    removeBlob(state, action: PayloadAction<{ id: string; image: string; type: BlobType }>) {
+      const { id, image, type } = action.payload;
 
       delete state.byId[id];
-      delete state.byImageType[imageType][id];
+      delete state.byImage[image][id];
       delete state.byType[type][id];
     },
     saveBlobUrl(state, action: PayloadAction<{ id: string; url: string }>) {

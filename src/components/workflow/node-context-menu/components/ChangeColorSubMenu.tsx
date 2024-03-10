@@ -14,7 +14,7 @@ import * as workflowAct from '_state/features/workflow/slice';
 import { NodeColor } from '_state/features/workflow/types';
 import { useColorMode } from '_theme';
 
-import { backgroundByType } from '../../../utils/backgroundColor';
+import { backgroundByType } from '../../utils/backgroundColor';
 
 type Props = {
   id: string;

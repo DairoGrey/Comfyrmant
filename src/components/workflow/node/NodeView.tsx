@@ -27,6 +27,7 @@ export const NodeView: FC<Props> = memo(({ nodeType, onClick, onDragStart }) => 
     },
     [type, onClick],
   );
+
   const handleDragStart = useCallback(
     (e: React.DragEvent) => {
       onDragStart?.(e, type);
@@ -76,3 +77,4 @@ export const NodeView: FC<Props> = memo(({ nodeType, onClick, onDragStart }) => 
     </Stack>
   );
 });
+NodeView.displayName = 'NodeView';

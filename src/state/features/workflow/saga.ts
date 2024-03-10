@@ -1,6 +1,7 @@
 import { Edge, Node, NodeChange, NodeDimensionChange, NodePositionChange, NodeSelectionChange } from 'reactflow';
 
-import { all, put, select, takeEvery } from 'redux-saga/effects';
+import { createAction } from '@reduxjs/toolkit';
+import { all, put, select, take, takeEvery } from 'redux-saga/effects';
 
 import * as apiSel from '_state/features/api/selector';
 import { default as apiQueries } from '_state/features/api/slice';
@@ -13,7 +14,9 @@ import * as settingsAct from '_state/features/settings/slice';
 
 import * as workflowSel from './selector';
 import * as workflowAct from './slice';
-import { NodeStateData, NodeTypes } from './types';
+import { ExportedNode, NodeStateData, NodeTypes } from './types';
+
+export const endRandomTick = createAction('workflow/randomTick/end');
 
 const alignSizeToUp = (value: number, alignment: number) => alignment * Math.ceil(Math.abs(value / alignment));
 const alignPositionToUp = (value: number, alignment: number) => alignment * Math.ceil(value / alignment);
@@ -77,6 +80,8 @@ function* randomTickFlow() {
 
     yield put(workflowAct.updateNodeWidgetValue({ id, pin, value }));
   }
+
+  yield put(endRandomTick());
 }
 
 function* queuePromptFlow() {
@@ -84,6 +89,9 @@ function* queuePromptFlow() {
 
   if (canBuildPrompt) {
     yield put(workflowAct.randomTick());
+
+    yield take(endRandomTick.type);
+
     const prompt: PromptRequest = yield select(workflowSel.getPrompt);
     const request: Promise<{ data?: PromptResponse; error?: PromptErrorResponse }> = yield put(
       apiQueries.endpoints.queuePrompt.initiate(prompt),
@@ -122,16 +130,18 @@ function* exportToFileFlow(action: ReturnType<typeof workflowAct.exportToFile>) 
   const nodes: Node<NodeStateData>[] = yield select(workflowSel.getNodes);
   const edges: Edge[] = yield select(workflowSel.getEdges);
 
-  const exportedNodes = nodes.map((node) => ({
+  const exportedNodes: ExportedNode[] = nodes.map((node) => ({
     id: node.id,
     type: node.data.nodeType.type,
     x: node.position.x,
     y: node.position.y,
+    style: node.style,
     inputs: node.data.inputs,
     outputs: node.data.outputs,
     widgets: node.data.widgets,
     values: node.data.values,
     tags: node.data.tags,
+    color: node.data.color,
   }));
 
   const exportedEdges = edges.map((edge) => edge.id);
@@ -162,6 +172,7 @@ function* importFromFileFlow(action: ReturnType<typeof workflowAct.importFromFil
     position: { x: node.x, y: node.y },
     width: node.width,
     height: node.height,
+    style: node.style,
     data: {
       nodeType: nodeTypes[node.type],
       inputs: node.inputs,
@@ -169,6 +180,7 @@ function* importFromFileFlow(action: ReturnType<typeof workflowAct.importFromFil
       widgets: node.widgets,
       values: node.values,
       tags: node.tags,
+      color: node.color,
     },
   }));
 

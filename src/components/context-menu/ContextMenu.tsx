@@ -65,7 +65,7 @@ export const SubMenuItem: FC<SubMenuItemProps> = ({
 
 type Props = MenuProps;
 
-export const ContextMenu: FC<Props> = (props) => {
+export const ContextMenu: FC<Props> = ({ children, ...props }) => {
   return (
     <Menu
       {...props}
@@ -85,6 +85,8 @@ export const ContextMenu: FC<Props> = (props) => {
         vertical: 'top',
         horizontal: 'right',
       }}
-    ></Menu>
+    >
+      {children}
+    </Menu>
   );
 };

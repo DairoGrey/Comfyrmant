@@ -63,6 +63,7 @@ const HandleView: FC<HandleViewProps> = memo(({ label, color, children, ...props
     </Stack>
   );
 });
+HandleView.displayName = 'HandleView';
 
 type InputViewProps = {
   input: NodeInput;

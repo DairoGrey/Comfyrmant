@@ -100,6 +100,7 @@ const IntNumberAdornment: FC<NumberAdornmentProps> = memo(({ value, widget, inpu
     </InputAdornment>
   );
 });
+IntNumberAdornment.displayName = 'IntNumberAdornment';
 
 const FloatNumberAdornment: FC<NumberAdornmentProps> = memo(({ value, input, onChange }) => {
   const { canStepDown, canStepUp, handleStepDown, handleStepUp } = useFloatSteps(onChange, input?.options, value);
@@ -123,6 +124,7 @@ const FloatNumberAdornment: FC<NumberAdornmentProps> = memo(({ value, input, onC
     </InputAdornment>
   );
 });
+FloatNumberAdornment.displayName = 'FloatNumberAdornment';
 
 const ADORNMENT: Record<string, any> = {
   INT: IntNumberAdornment,
@@ -176,3 +178,4 @@ export const InputFieldWidget: FC<Props> = memo(({ value, widget, input, output,
     />
   );
 });
+InputFieldWidget.displayName = 'InputFieldWidget';

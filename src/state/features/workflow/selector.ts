@@ -3,6 +3,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { PromptRequest } from '_state/features/api/types';
 import { NodeColor, NodeOutput, NodeWidgetState } from '_state/features/workflow/types';
 import type { RootState } from '_state/store';
+import { firstFree, secondFree } from '_state/utils';
 
 import { getClientId } from '../hub/selector';
 
@@ -11,8 +12,11 @@ import slice from './slice';
 
 const getFlow = (state: RootState) => state[slice.name];
 
+export const getId = createSelector(getFlow, (flow) => flow.id);
+export const getTitle = createSelector(getFlow, (flow) => flow.title);
 export const getNodes = createSelector(getFlow, (flow) => flow.nodes);
 export const getEdges = createSelector(getFlow, (flow) => flow.edges);
+
 const getChanges = createSelector(getFlow, (flow) => flow.changes);
 
 const getIsChangesEmpty = createSelector(getChanges, (changes) => changes.stack.length === 0);
@@ -41,8 +45,8 @@ export const getCanRedo = createSelector(
  * @returns {NodeOutput | undefined}
  **/
 export const getNodeOutput: (state: RootState, id: string, output?: string) => NodeOutput | undefined = createSelector(
-  [getNodes, (_, id: string, output?: string) => [id, output]],
-  (nodes, [id, output]) => {
+  [getNodes, firstFree<string>, secondFree<string | undefined>],
+  (nodes, id, output) => {
     if (!output) {
       return;
     }
@@ -66,8 +70,8 @@ export const getNodeOutput: (state: RootState, id: string, output?: string) => N
  * @returns {unknown | undefined}
  **/
 export const getNodeOutputValue: (state: RootState, id: string, output: string) => unknown | undefined = createSelector(
-  [getNodes, (_, id: string, output: string) => [id, output]],
-  (nodes, [id, output]) => {
+  [getNodes, firstFree<string>, secondFree<string>],
+  (nodes, id, output) => {
     const node = nodes.find((node) => node.id === id);
 
     if (node) {
@@ -87,7 +91,7 @@ export const getNodeOutputValue: (state: RootState, id: string, output: string) 
  * @returns {NodeOutput | undefined}
  **/
 export const getOutputOfConnectedSourceNode: (state: RootState, id: string, input: string) => NodeOutput | undefined =
-  createSelector([getNodes, getEdges, (_, id: string, input: string) => [id, input]], (nodes, edges, [id, input]) => {
+  createSelector([getNodes, getEdges, firstFree<string>, secondFree<string>], (nodes, edges, id, input) => {
     const [sourceNode, sourceHandle] = getConnectedSourceNode(id, input, nodes, edges);
 
     if (!sourceNode || !sourceHandle) {
@@ -108,8 +112,8 @@ export const getOutputOfConnectedSourceNode: (state: RootState, id: string, inpu
  * @returns {unknown | undefined}
  **/
 export const getInputValueFromConnectedSourceNode = createSelector(
-  [getNodes, getEdges, (_, id: string, input: string) => [id, input]],
-  (nodes, edges, [id, input]) => {
+  [getNodes, getEdges, firstFree<string>, secondFree<string>],
+  (nodes, edges, id, input) => {
     const [sourceNode, sourceHandle] = getConnectedSourceNode(id, input, nodes, edges);
 
     if (!sourceNode || !sourceHandle) {
@@ -127,7 +131,7 @@ export const getInputValueFromConnectedSourceNode = createSelector(
 );
 
 export const getNodeColor: (state: RootState, id: string) => NodeColor | undefined = createSelector(
-  [getNodes, (_, id: string) => id],
+  [getNodes, firstFree<string>],
   (nodes, id) => {
     const node = nodes.find((node) => node.id === id);
 
@@ -138,7 +142,7 @@ export const getNodeColor: (state: RootState, id: string) => NodeColor | undefin
 );
 
 export const getNodeResizing: (state: RootState, id: string) => boolean = createSelector(
-  [getNodes, (_, id: string) => id],
+  [getNodes, firstFree<string>],
   (nodes, id) => {
     const node = nodes.find((node) => node.id === id);
 
@@ -147,7 +151,7 @@ export const getNodeResizing: (state: RootState, id: string) => boolean = create
 );
 
 export const getNodeCollapsed: (state: RootState, id: string) => boolean = createSelector(
-  [getNodes, (_, id: string) => id],
+  [getNodes, firstFree<string>],
   (nodes, id) => {
     const node = nodes.find((node) => node.id === id);
 
@@ -156,7 +160,7 @@ export const getNodeCollapsed: (state: RootState, id: string) => boolean = creat
 );
 
 export const getNodeTags: (state: RootState, id: string) => string[] | undefined = createSelector(
-  [getNodes, (_, id: string) => id],
+  [getNodes, firstFree<string>],
   (nodes, id) => {
     const node = nodes.find((node) => node.id === id);
 
@@ -165,15 +169,15 @@ export const getNodeTags: (state: RootState, id: string) => string[] | undefined
 );
 
 export const getIsNodeInputConnected: (state: RootState, id: string, input: string) => boolean = createSelector(
-  [getEdges, (_, id: string, input: string) => [id, input] as const],
-  (edges, [id, input]) => {
+  [getEdges, firstFree<string>, secondFree<string>],
+  (edges, id, input) => {
     return edges.some((edge) => edge.target === id && edge.targetHandle === input);
   },
 );
 
 export const getIsNodeOutputConnected: (state: RootState, id: string, output: string) => boolean = createSelector(
-  [getEdges, (_, id: string, output: string) => [id, output] as const],
-  (edges, [id, output]) => {
+  [getEdges, firstFree<string>, secondFree<string>],
+  (edges, id, output) => {
     return edges.some((edge) => edge.source === id && edge.source === output);
   },
 );
