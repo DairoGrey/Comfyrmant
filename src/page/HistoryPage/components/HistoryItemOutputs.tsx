@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -12,7 +12,7 @@ import {
   Stack,
 } from '@mui/material';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded';
 
 import { ImageOutputResponse } from '_state/features/api/types';
 import * as blobsAct from '_state/features/blobs/slice';
@@ -28,7 +28,7 @@ export const HistoryItemOutputs: FC<Props> = ({ outputs }) => {
 
   const [page, setPage] = useState(0);
 
-  const keys = Object.keys(outputs);
+  const keys = useMemo(() => Object.keys(outputs), [outputs]);
 
   const handleLoadAll = useCallback(() => {
     Object.values(outputs).forEach((output) => {
@@ -42,7 +42,13 @@ export const HistoryItemOutputs: FC<Props> = ({ outputs }) => {
     return null;
   }
 
-  const images = outputs[keys[page]].images;
+  const images = outputs[keys[Math.min(page, keys.length - 1)]].images;
+
+  useEffect(() => {
+    if (page > keys.length - 1) {
+      setPage(keys.length - 1);
+    }
+  }, [page, keys, setPage]);
 
   return (
     <Accordion component={Stack}>

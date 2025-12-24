@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Menu, MenuItem, MenuItemProps, MenuProps } from '@mui/material';
 
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRightRounded';
 
 type SubMenuItemProps = Omit<MenuItemProps, 'onClick'> & {
   MenuProps: Omit<MenuProps, 'open'>;

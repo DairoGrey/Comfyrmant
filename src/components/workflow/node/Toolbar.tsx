@@ -3,13 +3,13 @@ import { NodeToolbar, NodeToolbarProps, Position } from 'reactflow';
 
 import { Button, ButtonGroup, Tooltip } from '@mui/material';
 
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import DeleteIcon from '@mui/icons-material/Delete';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
+import DeleteIcon from '@mui/icons-material/DeleteRounded';
+import LockOpenIcon from '@mui/icons-material/LockOpenRounded';
+import LockIcon from '@mui/icons-material/LockRounded';
+import OpenInFullIcon from '@mui/icons-material/OpenInFullRounded';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLessRounded';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMoreRounded';
 
 type Props = {
   resizing: boolean;

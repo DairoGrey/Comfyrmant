@@ -40,6 +40,7 @@ import { MiniMap } from './MiniMap';
 import { NodeContextMenu } from './node-context-menu';
 import { PaneContextMenu } from './pane-context-menu';
 import { QuickActions } from './quick-actions';
+import { baseCss } from './Styles';
 
 type OnEdgeUpdateStartFunc = (e: React.MouseEvent, edge: Edge<any>, handleType: HandleType) => void;
 type OnEdgeUpdateEndFunc = (e: MouseEvent | TouchEvent, edge: Edge<any>, handleType: HandleType) => void;
@@ -70,8 +71,8 @@ export const Workflow = () => {
 
   const edgeUpdateSuccessful = useRef(false);
 
-  const getNodeColor = useMemo(
-    () => createMiniMapNodeColorGetter(colorMode, theme.palette.divider),
+  const getMiniMapNodeColor = useMemo(
+    () => createMiniMapNodeColorGetter(colorMode, theme, theme.vars.palette.divider),
     [colorMode, theme],
   );
 
@@ -102,7 +103,10 @@ export const Workflow = () => {
     setNode(null);
   }, [setIsNodeMenuOpen, setNode]);
 
-  const handleNodeColor = useCallback((node: Node<NodeStateData>) => getNodeColor(node.data.color), [getNodeColor]);
+  const handleNodeColor = useCallback(
+    (node: Node<NodeStateData>) => getMiniMapNodeColor(node.data.color, node.data.bypass),
+    [getMiniMapNodeColor],
+  );
 
   const handleDragOver: React.DragEventHandler = useCallback((e) => {
     if (e.dataTransfer.types.includes('application/node')) {
@@ -239,6 +243,7 @@ export const Workflow = () => {
 
   return (
     <>
+      {baseCss}
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -262,9 +267,9 @@ export const Workflow = () => {
       >
         <Background
           gap={[snapGrid, snapGrid]}
-          style={{ stroke: theme.palette.divider }}
+          style={{ stroke: theme.vars.palette.divider }}
           variant={toBackgroundVariant(background)}
-          color={theme.palette.divider}
+          color={theme.vars.palette.divider}
           size={background === WorkflowBackground.Dots ? 2 : snapGrid / 3}
           lineWidth={1}
         />

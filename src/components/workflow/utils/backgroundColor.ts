@@ -19,12 +19,12 @@ import {
   teal,
   yellow,
 } from '@mui/material/colors';
-import { darken } from '@mui/material/styles';
+import { darken, Theme } from '@mui/material/styles';
 
 import { NodeColor } from '_state/features/workflow/types';
 import { ColorMode } from '_theme';
 
-const DARKEN_KEY: keyof typeof red = 700;
+const DARKEN_KEY: keyof typeof red = 800;
 const DARKEN_FACTOR = 0.85;
 
 const MINIMAP_DARKEN_KEY: keyof typeof red = 700;
@@ -53,25 +53,25 @@ const NODE_COLORS: Record<ColorMode, Record<NodeColor, string>> = {
     [NodeColor.Yellow]: darken(yellow[DARKEN_KEY], DARKEN_FACTOR),
   },
   [ColorMode.Light]: {
-    [NodeColor.Amber]: amber[100],
-    [NodeColor.Blue]: blue[100],
-    [NodeColor.BlueGrey]: blueGrey[100],
-    [NodeColor.Brown]: brown[100],
-    [NodeColor.Cyan]: cyan[100],
-    [NodeColor.DeepOrange]: deepOrange[100],
-    [NodeColor.DeepPurple]: deepPurple[100],
-    [NodeColor.Green]: green[100],
-    [NodeColor.Grey]: grey[100],
-    [NodeColor.Indigo]: indigo[100],
-    [NodeColor.LightBlue]: lightBlue[100],
-    [NodeColor.LightGreen]: lightGreen[100],
-    [NodeColor.Lime]: lime[100],
-    [NodeColor.Orange]: orange[100],
-    [NodeColor.Pink]: pink[100],
-    [NodeColor.Purple]: purple[100],
-    [NodeColor.Red]: red[100],
-    [NodeColor.Teal]: teal[100],
-    [NodeColor.Yellow]: yellow[100],
+    [NodeColor.Amber]: amber[50],
+    [NodeColor.Blue]: blue[50],
+    [NodeColor.BlueGrey]: blueGrey[50],
+    [NodeColor.Brown]: brown[50],
+    [NodeColor.Cyan]: cyan[50],
+    [NodeColor.DeepOrange]: deepOrange[50],
+    [NodeColor.DeepPurple]: deepPurple[50],
+    [NodeColor.Green]: green[50],
+    [NodeColor.Grey]: grey[50],
+    [NodeColor.Indigo]: indigo[50],
+    [NodeColor.LightBlue]: lightBlue[50],
+    [NodeColor.LightGreen]: lightGreen[50],
+    [NodeColor.Lime]: lime[50],
+    [NodeColor.Orange]: orange[50],
+    [NodeColor.Pink]: pink[50],
+    [NodeColor.Purple]: purple[50],
+    [NodeColor.Red]: red[50],
+    [NodeColor.Teal]: teal[50],
+    [NodeColor.Yellow]: yellow[50],
   },
 };
 
@@ -120,14 +120,27 @@ const MINIMAP_NODE_COLORS: Record<ColorMode, Record<NodeColor, string>> = {
   },
 };
 
-export const backgroundByType = (color: NodeColor, colorMode: ColorMode) => {
+export const backgroundByType = (color: NodeColor, theme: Theme, colorMode: ColorMode) => {
   return NODE_COLORS[colorMode][color];
 };
 
-export const createMiniMapNodeColorGetter = (colorMode: ColorMode, fallback: string) => (color?: NodeColor) => {
-  if (!color) {
-    return fallback;
-  }
+export const progressBarByType = (color: NodeColor, theme: Theme, colorMode: ColorMode) => {
+  const value = NODE_COLORS[colorMode][color];
 
-  return MINIMAP_NODE_COLORS[colorMode][color];
+  return colorMode === ColorMode.Dark
+    ? [value, theme.lighten(value, 0.45)]
+    : [theme.darken(value, 0.1), theme.darken(value, 0.3)];
 };
+
+export const createMiniMapNodeColorGetter =
+  (colorMode: ColorMode, theme: Theme, fallback: string) => (color?: NodeColor, bypass?: boolean) => {
+    if (bypass) {
+      return colorMode === ColorMode.Dark ? theme.darken(fallback, 0.5) : theme.lighten(fallback, 0.5);
+    }
+
+    if (!color) {
+      return fallback;
+    }
+
+    return MINIMAP_NODE_COLORS[colorMode][color];
+  };

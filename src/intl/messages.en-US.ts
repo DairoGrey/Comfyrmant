@@ -11,6 +11,7 @@ export const en_US: Record<string, string> = {
   'ui.app-bar.widgets.workflow.status-block.executed-prompts': 'Executed prompts',
   'ui.app-bar.widgets.workflow.status-block.remaining-queue': 'Remaining queue',
 
+  'ui.node.context-menu.bypass': 'Bypass',
   'ui.node.context-menu.change-color': 'Change color',
   'ui.node.context-menu.change-color.item.reset-color': 'Reset color',
   'ui.node.context-menu.convert-input-to-widget': 'Convert to widget',
@@ -18,6 +19,7 @@ export const en_US: Record<string, string> = {
   'ui.node.context-menu.convert-widget-to-input': 'Convert to input',
   'ui.node.context-menu.convert-widget-to-input.item': '<colored>{widget}</colored>',
   'ui.node.context-menu.disconnect-all': 'Disconnect all',
+  'ui.node.context-menu.keep': 'Keep',
 
   'ui.quick-actions.reset-all-colors.tooltip': 'Reset all colors',
   'ui.quick-actions.resize-to-snap-grip.tooltip': 'Resize to snap grid',

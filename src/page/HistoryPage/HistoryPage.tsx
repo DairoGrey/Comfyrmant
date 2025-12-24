@@ -33,7 +33,7 @@ export const HistoryPage = () => {
 
   return (
     <Grid container columns={24} flexShrink={0} height="calc(100%)" width="100vw">
-      <Grid item xs={8} md={8} lg={6} flexShrink={0} height="100%" overflow="hidden">
+      <Grid size={{ xs: 8, md: 8, lg: 6 }} flexShrink={0} height="100%" overflow="hidden">
         <Box
           sx={{ overflowY: 'auto', height: '100%', borderRight: '1px solid', borderRightColor: theme.palette.divider }}
         >
@@ -42,7 +42,7 @@ export const HistoryPage = () => {
           </ErrorBoundary>
         </Box>
       </Grid>
-      <Grid item xs={16} md={16} lg={18} flexShrink={0} height="100%" overflow="hidden">
+      <Grid size={{ xs: 16, md: 16, lg: 18 }} flexShrink={0} height="100%" overflow="hidden">
         <Stack gap={1} overflow="hidden" sx={{ height: '100%' }}>
           <ErrorBoundary>
             <Box sx={{ overflowY: 'auto', height: '100%' }}>

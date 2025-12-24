@@ -130,6 +130,15 @@ export const getInputValueFromConnectedSourceNode = createSelector(
   },
 );
 
+export const getNodeBypass: (state: RootState, id: string) => boolean = createSelector(
+  [getNodes, firstFree<string>],
+  (nodes, id) => {
+    const node = nodes.find((node) => node.id === id);
+
+    return Boolean(node?.data.bypass);
+  },
+);
+
 export const getNodeColor: (state: RootState, id: string) => NodeColor | undefined = createSelector(
   [getNodes, firstFree<string>],
   (nodes, id) => {

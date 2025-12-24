@@ -10,9 +10,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FolderIcon from '@mui/icons-material/Folder';
+import ExpandLessIcon from '@mui/icons-material/ExpandLessRounded';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded';
+import FolderIcon from '@mui/icons-material/FolderRounded';
 
 import { NodeType } from '_state/features/workflow/types';
 
@@ -61,7 +61,10 @@ const Category: FC<CategoryProps> = ({ title, id, selectedCategory, categories, 
             <ListItemIcon>
               <FolderIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary={title} secondary={`nodes: ${nodesCount} | categories: ${childrenCount}`} />
+            <ListItemText
+              primary={title || 'Unknown'}
+              secondary={`nodes: ${nodesCount} | categories: ${childrenCount}`}
+            />
           </ListItemButton>
         </ListItem>
       </List>

@@ -3,11 +3,11 @@ import { FC } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
+import { ListItemIcon, ListItemText, MenuItem, useTheme } from '@mui/material';
 
-import CircleIcon from '@mui/icons-material/Circle';
-import ColorLensIcon from '@mui/icons-material/ColorLens';
-import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
+import CircleIcon from '@mui/icons-material/CircleRounded';
+import ColorLensIcon from '@mui/icons-material/ColorLensRounded';
+import FormatColorResetIcon from '@mui/icons-material/FormatColorResetRounded';
 
 import { SubMenuItem } from '_components/context-menu';
 import * as workflowAct from '_state/features/workflow/slice';
@@ -23,6 +23,7 @@ type Props = {
 };
 
 export const ChangeColorSubMenu: FC<Props> = ({ id, onClose }) => {
+  const theme = useTheme();
   const colorMode = useColorMode();
 
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ export const ChangeColorSubMenu: FC<Props> = ({ id, onClose }) => {
               }}
             >
               <ListItemIcon>
-                <CircleIcon sx={{ color: backgroundByType(nodeColor, colorMode) }} />
+                <CircleIcon sx={{ color: backgroundByType(nodeColor, theme, colorMode) }} />
               </ListItemIcon>
               <ListItemText primary={key} />
             </MenuItem>

@@ -4,6 +4,8 @@ const { cleanEnv, str } = require('envalid');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const ReactRefreshTypeScript = require('react-refresh-typescript');
 
 const package = require('./package.json');
 
@@ -16,10 +18,10 @@ const getEnv = (isProduction) => {
   const DOTENV_SUFFIX = isProduction ? '.production' : '';
 
   const processEnv = {};
-  dotenv.config({ path: path.resolve(__dirname, `.env${DOTENV_SUFFIX}`), processEnv });
+  dotenv.config({ path: path.resolve(__dirname, `.env${DOTENV_SUFFIX}`), processEnv, quiet: true });
 
   const env = cleanEnv(processEnv, {
-    LOGLEVER: str({ default: 'full' }),
+    LOG_LEVEL: str({ default: 'full' }),
     CHANGES: str({ default: 'off' })
   });
 
@@ -49,8 +51,20 @@ module.exports = (env, argv) => {
         import: path.resolve(__dirname, 'src/index.tsx'),
       },
     },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+        },
+      },
+    },
     output: {
       path: path.resolve(__dirname, 'dist'),
+      filename: '[name].[contenthash].js',
       clean: true,
     },
     resolve: {
@@ -74,7 +88,19 @@ module.exports = (env, argv) => {
     },
     module: {
       rules: [
-        { test: /\.([cm]?tsx?)$/, loader: 'ts-loader' },
+        {
+          test: /\.([cm]?tsx?)$/,
+          exclude: /node_modules/,
+          use: [{
+            loader: 'ts-loader',
+            options: {
+              getCustomTransformers: () => ({
+                before: [!isProduction && ReactRefreshTypeScript()].filter(Boolean),
+              }),
+              transpileOnly: !isProduction,
+            },
+          }]
+        },
         {
           test: /\.css$/i,
           use: ['style-loader', 'css-loader'],
@@ -87,12 +113,39 @@ module.exports = (env, argv) => {
         chunks: 'all',
       },
     },
+    devServer: {
+      hot: true,
+      port: 8189,
+      host: '192.168.56.1',
+      proxy: [
+        {
+          context: ['/'],
+          target: 'http://192.168.56.1:8188',
+        },
+        {
+          context: ['/ws'],
+          target: 'http://192.168.56.1:8188',
+          ws: true,
+        }
+      ],
+      webSocketServer: {
+        options: {
+          path: '/hmr',
+        },
+      },
+      client: {
+        webSocketURL: {
+          pathname: '/hmr',
+        },
+      },
+    },
     plugins: [
+      !isProduction && new ReactRefreshWebpackPlugin(),
       new webpack.EnvironmentPlugin(envToSafe(processEnv)),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, './index.template.html'),
-        filename: '../index.html',
+        filename: 'index.html',
       }),
-    ],
+    ].filter(Boolean),
   };
 };

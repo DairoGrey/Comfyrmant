@@ -4,16 +4,16 @@ import { Panel, ReactFlowState, useReactFlow, useStore, useStoreApi } from 'reac
 
 import { shallow } from 'zustand/shallow';
 
-import { Divider, IconButton, Paper, Stack, SvgIcon, Tooltip } from '@mui/material';
+import { Divider, IconButton, Paper, Stack, SvgIcon, Tooltip, useTheme } from '@mui/material';
 
-import AddIcon from '@mui/icons-material/Add';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import RemoveIcon from '@mui/icons-material/Remove';
-import TimesOneMobiledataIcon from '@mui/icons-material/TimesOneMobiledata';
-import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
-import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
+import AddIcon from '@mui/icons-material/AddRounded';
+import FullscreenIcon from '@mui/icons-material/FullscreenRounded';
+import LockOpenIcon from '@mui/icons-material/LockOpenRounded';
+import LockIcon from '@mui/icons-material/LockRounded';
+import RemoveIcon from '@mui/icons-material/RemoveRounded';
+import TimesOneMobiledataIcon from '@mui/icons-material/TimesOneMobiledataRounded';
+import ZoomInMapIcon from '@mui/icons-material/ZoomInMapRounded';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMapRounded';
 
 const selector = (s: ReactFlowState) => ({
   isInteractive: s.nodesDraggable || s.nodesConnectable || s.elementsSelectable,
@@ -25,6 +25,8 @@ const selector = (s: ReactFlowState) => ({
 });
 
 export const Controls: FC = memo(() => {
+  const theme = useTheme();
+
   const store = useStoreApi();
   const { isInteractive, canZoomIn, canZoomOut, maxZoom, minZoom, zoom } = useStore(selector, shallow);
   const flow = useReactFlow();
@@ -75,7 +77,15 @@ export const Controls: FC = memo(() => {
                 viewBox="0 0 24 24"
                 stroke="none"
               >
-                <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="0.75rem">
+                <text
+                  fontFamily={theme.typography.fontFamily}
+                  x="50%"
+                  y="50%"
+                  dy="2px"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize="0.75rem"
+                >
                   {zoom.toFixed(2)}
                 </text>
               </svg>

@@ -3,7 +3,7 @@ import { Panel } from 'reactflow';
 
 import { Box, Divider, Paper, Stack, Typography } from '@mui/material';
 
-import BoltIcon from '@mui/icons-material/Bolt';
+import BoltIcon from '@mui/icons-material/BoltRounded';
 
 import { ResetAllColors } from './reset-all-colors';
 import { ResizeToSnapGrid } from './resize-to-snap-grid';

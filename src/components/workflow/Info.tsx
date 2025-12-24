@@ -4,8 +4,8 @@ import { Panel } from 'reactflow';
 
 import { IconButton, InputAdornment, Paper, Stack, TextField, Typography } from '@mui/material';
 
-import DoneIcon from '@mui/icons-material/Done';
-import EditIcon from '@mui/icons-material/Edit';
+import DoneIcon from '@mui/icons-material/DoneRounded';
+import EditIcon from '@mui/icons-material/EditRounded';
 
 import * as workflowSel from '_state/features/workflow/selector';
 import * as workflowAct from '_state/features/workflow/slice';

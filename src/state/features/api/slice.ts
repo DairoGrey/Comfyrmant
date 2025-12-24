@@ -40,13 +40,13 @@ const axiosQuery: BaseQueryFn = async (
 
     return { data: response.data };
   } catch (e: any) {
-    return { error: e.response.data };
+    throw e?.response?.data ? { error: e.response.data } : e;
   }
 };
 
 const apiSlice = createApi({
   reducerPath: '@api',
-  tagTypes: ['nodes', 'queue', 'history'],
+  tagTypes: ['nodes', 'queue', 'history', 'system_stats', 'metadata'],
   baseQuery: axiosQuery,
   endpoints: (builder) => ({
     getObjectInfo: builder.query<NodeTypes, void>({
@@ -73,6 +73,14 @@ const apiSlice = createApi({
       },
       transformResponse: transformHistory,
     }),
+    getSystemStats: builder.query<any, void>({
+      query: () => 'system_stats',
+      providesTags: [{ type: 'system_stats' }],
+    }),
+    getMetadata: builder.query<any, { folder: string; filename: string }>({
+      query: ({ folder, filename }) => ({ url: `view_metadata/${folder}?filename=${filename}` }),
+      providesTags: (res, err, { folder, filename }) => [{ type: 'system_stats', id: `${folder}/${filename}` }],
+    }),
     getQueue: builder.query<any, void>({
       query: () => 'queue',
       providesTags: [{ type: 'queue', id: 'list' }],
@@ -86,6 +94,30 @@ const apiSlice = createApi({
         url: 'prompt',
         method: 'POST',
         body: value,
+      }),
+      invalidatesTags: ['queue'],
+    }),
+    clearQueue: builder.mutation<PromptResponse, void>({
+      query: () => ({
+        url: 'prompt',
+        method: 'POST',
+        body: { clear: true },
+      }),
+      invalidatesTags: ['queue'],
+    }),
+    removeFromQueue: builder.mutation<PromptResponse, string[]>({
+      query: (list) => ({
+        url: 'prompt',
+        method: 'POST',
+        body: { delete: list },
+      }),
+      invalidatesTags: ['queue'],
+    }),
+    interrupt: builder.mutation<PromptResponse, string | void>({
+      query: (id) => ({
+        url: 'interrupt',
+        method: 'POST',
+        body: id ? { prompt_id: id } : undefined,
       }),
       invalidatesTags: ['queue'],
     }),

@@ -18,7 +18,7 @@ export const Resizer: FC<Props> = ({ visible }) => {
       isVisible={visible}
       handleStyle={{ width: 8, height: 8, border: 'none' }}
       lineStyle={{ borderWidth: 1 }}
-      color={theme.palette.secondary.main}
+      color={theme.vars.palette.secondary.main}
     />
   );
 };

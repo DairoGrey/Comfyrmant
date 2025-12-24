@@ -2,17 +2,16 @@ import React, { useCallback, useContext, useEffect } from 'react';
 import { createContext, FC, ReactNode, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type {} from '@mui/lab/themeAugmentation';
-
-import { useMediaQuery } from '@mui/material';
 import { enUS, ruRU } from '@mui/material/locale';
 import * as styles from '@mui/material/styles';
-import createPalette, { PaletteAugmentColorOptions } from '@mui/material/styles/createPalette';
+import type {} from '@mui/material/themeCssVarsAugmentation';
 
 import * as settingsSel from '_state/features/settings/selector';
 import * as settingsAct from '_state/features/settings/slice';
 import { Locale } from '_state/features/settings/types';
 
+import '@fontsource-variable/ubuntu-sans/wght.css';
+import '@fontsource-variable/ubuntu-sans/wdth.css';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -28,37 +27,39 @@ const LOCALE: Record<Locale, any> = {
   [Locale.RU_RU]: ruRU,
 };
 
-const PRIMARY_COLOR: PaletteAugmentColorOptions = {
-  color: { main: '#66B3FF' },
-  name: 'argentinian blue',
+const PRIMARY_COLOR = {
+  main: '#66B3FF',
 };
 
-const SECONDARY_COLOR: PaletteAugmentColorOptions = {
-  color: { main: '#FFAC59' },
-  name: 'samdy brown',
+const SECONDARY_COLOR: styles.PaletteColorOptions = {
+  main: '#FFAC59',
 };
 
-export const createTheme = (mode: ColorMode, locale: Locale) => {
-  const palette = createPalette({
-    contrastThreshold: 7.0,
-    mode,
-  });
-
-  const prop = mode === ColorMode.Dark ? 'light' : 'main';
-
-  const primary = palette.augmentColor(PRIMARY_COLOR);
-  const secondary = palette.augmentColor(SECONDARY_COLOR);
-
+export const createTheme = (locale: Locale) => {
   return styles.createTheme(
     {
-      palette: {
-        contrastThreshold: 7.0,
-        mode,
-        primary: {
-          main: primary[prop],
+      modularCssLayers: true,
+      cssVariables: {
+        nativeColor: true,
+        colorSchemeSelector: '[data-color-mode=%s]',
+      },
+      typography: {
+        fontFamily: 'var(--ui-regular-font)',
+      },
+      colorSchemes: {
+        dark: {
+          palette: {
+            contrastThreshold: 0.7,
+            primary: PRIMARY_COLOR,
+            secondary: SECONDARY_COLOR,
+          },
         },
-        secondary: {
-          main: secondary[prop],
+        light: {
+          palette: {
+            contrastThreshold: 0.7,
+            primary: PRIMARY_COLOR,
+            secondary: SECONDARY_COLOR,
+          },
         },
       },
     },
@@ -74,14 +75,20 @@ export const ColorModeProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
   const colorModeFromSettings = useSelector(settingsSel.getColorMode);
 
-  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
-  const initialColorMode = prefersDark ? ColorMode.Dark : ColorMode.Light;
+  const { mode, systemMode, setMode } = styles.useColorScheme();
+  const initialColorMode =
+    mode === 'system'
+      ? systemMode === 'dark'
+        ? ColorMode.Dark
+        : ColorMode.Light
+      : mode === 'dark'
+        ? ColorMode.Dark
+        : ColorMode.Light;
 
   const [colorMode, setColorMode] = useState(colorModeFromSettings || initialColorMode);
 
   const changeColorMode = useCallback(
     (colorMode: ColorMode) => {
-      dispatch(settingsAct.changeColorMode(colorMode));
       setColorMode(colorMode);
     },
     [setColorMode],
@@ -96,8 +103,13 @@ export const ColorModeProvider: FC<{ children: ReactNode }> = ({ children }) => 
   );
 
   useEffect(() => {
+    dispatch(settingsAct.changeColorMode(colorMode));
+    setMode(colorMode);
+  }, [colorMode]);
+
+  useEffect(() => {
     if (colorModeFromSettings) {
-      setColorMode(colorModeFromSettings);
+      setMode(colorMode);
     }
   }, [colorModeFromSettings]);
 

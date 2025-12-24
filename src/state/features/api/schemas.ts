@@ -1,56 +1,36 @@
-import Ajv, { JSONSchemaType } from 'ajv';
+import joi from 'joi';
 
 import { ObjectInfoApiResponse, ObjectItemApiResponse } from './types';
 
-const ajv = new Ajv();
+const ObjectItemApiResponseSchema = joi.object<ObjectItemApiResponse, true>({
+  api_node: joi.boolean(),
+  category: joi.string(),
+  deprecated: joi.boolean(),
+  description: joi.string().required(),
+  display_name: joi.string().optional(),
+  input: joi
+    .object({
+      required: joi.object().required(),
+    })
+    .required(),
+  input_order: joi
+    .object({
+      required: joi.array().items(joi.string()).required(),
+    })
+    .required(),
+  name: joi.string().required(),
+  output: joi.array().items(joi.string()).required(),
+  output_is_list: joi.array().items(joi.boolean().optional()).required(),
+  output_matchtypes: joi.string().optional().required(),
+  output_name: joi.array().items(joi.string()).required(),
+  output_node: joi.boolean().required(),
+  output_tooltips: joi.array().items(joi.string().optional()).required(),
+  experimental: joi.boolean().required(),
+  python_module: joi.string().required(),
+});
 
-const ObjectItemApiResponseSchema: JSONSchemaType<ObjectItemApiResponse> = {
-  type: 'object',
-  properties: {
-    category: { type: 'string' },
-    description: { type: 'string' },
-    display_name: { type: 'string' },
-    name: { type: 'string' },
-    input: {
-      type: 'object',
-      properties: {
-        required: {
-          type: 'object',
-        },
-      },
-      required: ['required'],
-      additionalProperties: true,
-    },
-    output: {
-      type: 'array',
-      items: {
-        oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
-      },
-    },
-    output_name: { type: 'array', items: { type: 'string' } },
-    output_is_list: { type: 'array', items: { type: 'boolean' } },
-    output_node: { type: 'boolean' },
-  },
-  required: [
-    'category',
-    'description',
-    'display_name',
-    'name',
-    'input',
-    'output',
-    'output_name',
-    'output_is_list',
-    'output_node',
-  ],
-  additionalProperties: false,
-};
+export const validateObjectItemApiResponse = (data: unknown) => ObjectItemApiResponseSchema.validate(data);
 
-export const validateObjectItemApiResponse = ajv.compile(ObjectItemApiResponseSchema);
+const ObjectInfoApiResponseSchema = joi.object<ObjectInfoApiResponse, true>().pattern(/^/, ObjectItemApiResponseSchema);
 
-const ObjectInfoApiResponseSchema: JSONSchemaType<ObjectInfoApiResponse> = {
-  type: 'object',
-  required: [],
-  additionalProperties: ObjectItemApiResponseSchema,
-};
-
-export const validateObjectInfoApiResponse = ajv.compile(ObjectInfoApiResponseSchema);
+export const validateObjectInfoApiResponse = (data: unknown) => ObjectInfoApiResponseSchema.validate(data);

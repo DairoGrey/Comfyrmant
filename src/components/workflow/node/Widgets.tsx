@@ -120,11 +120,21 @@ type Props = {
   widgets: Record<string, NodeWidgetState>;
   inputs: Record<string, NodeInputState>;
   outputs: Record<string, NodeOutputState>;
+  fullHeight?: boolean;
 };
 
-export const Widgets: FC<Props> = memo(({ id, widgets, inputs, outputs }) => {
+export const Widgets: FC<Props> = memo(({ id, widgets, inputs, outputs, fullHeight = false }) => {
   return (
-    <Stack className="nodrag" direction="column" gap={2} px={3} py={2} overflow="hidden" flexShrink={0}>
+    <Stack
+      className="nodrag"
+      direction="column"
+      gap={2}
+      px={3}
+      py={2}
+      height={fullHeight ? '100%' : undefined}
+      overflow="hidden"
+      flexShrink={0}
+    >
       {Object.values(widgets).map((widget) => {
         const key = `${id}-${widget.name}-${widget.type}`;
 

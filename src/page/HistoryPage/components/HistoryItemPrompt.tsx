@@ -18,7 +18,7 @@ import {
   Tabs,
 } from '@mui/material';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded';
 
 import { ScrollableArea } from '_components/scrollable-area';
 import { SyntaxHighlighter } from '_components/syntax-highlighter';

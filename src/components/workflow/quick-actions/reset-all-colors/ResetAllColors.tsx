@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IconButton, Tooltip } from '@mui/material';
 
-import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
+import FormatColorResetIcon from '@mui/icons-material/FormatColorResetRounded';
 
 import * as settingsSel from '_state/features/settings/selector';
 import * as workflowAct from '_state/features/workflow/slice';

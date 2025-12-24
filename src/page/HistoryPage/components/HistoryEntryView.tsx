@@ -22,7 +22,7 @@ export const HistoryEntryView: FC<Props> = ({ entry }) => {
   return (
     <Box>
       <Grid container columns={18} sx={{ borderBottom: '1px solid', borderBottomColor: theme.palette.divider }}>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <List>
             <ListItem>
               <ListItemText primary={entry.info.id} secondary="Id" />
@@ -35,7 +35,7 @@ export const HistoryEntryView: FC<Props> = ({ entry }) => {
             </ListItem>
           </List>
         </Grid>
-        <Grid item xs={6}></Grid>
+        <Grid size={6}></Grid>
       </Grid>
 
       <Stack p={2}>

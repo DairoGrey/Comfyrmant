@@ -17,8 +17,8 @@ import {
   Typography,
 } from '@mui/material';
 
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import SaveIcon from '@mui/icons-material/Save';
+import FileDownloadIcon from '@mui/icons-material/FileDownloadRounded';
+import SaveIcon from '@mui/icons-material/SaveRounded';
 
 import * as workflowAct from '_state/features/workflow/slice';
 

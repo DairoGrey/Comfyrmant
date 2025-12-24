@@ -7,7 +7,7 @@ import { ReactFlowProvider } from 'reactflow';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 
-import { Container, CssBaseline, ThemeProvider } from '@mui/material';
+import { Container, CssBaseline, InitColorSchemeScript, ThemeProvider } from '@mui/material';
 
 import { AppBar } from '_components/app-bar';
 import { Notifications } from '_components/notification';
@@ -19,12 +19,9 @@ import { WorkspacesAppBarWidgets, WorkspacesPage } from '_page/WorkspacesPage';
 import { ROUTES } from '_routes';
 import * as settingsSel from '_state/features/settings/selector';
 import * as settingsAct from '_state/features/settings/slice';
-import { createTheme, useColorMode } from '_theme';
+import { ColorModeProvider, createTheme } from '_theme';
 
-const ROUTER_FUTURE = {
-  v7_relativeSplatPath: true,
-  v7_startTransition: true,
-};
+import { globalStyles } from '../styles';
 
 const useRouterLocationListener = () => {
   const location = useLocation();
@@ -75,26 +72,28 @@ const RootLayout = () => {
 };
 
 export const Main = () => {
-  const colorMode = useColorMode();
-
   const locale = useSelector(settingsSel.getLocale);
   const location = useSelector(settingsSel.getLocation);
 
-  const theme = useMemo(() => createTheme(colorMode, locale), [colorMode, locale]);
+  const theme = useMemo(() => createTheme(locale), [locale]);
 
   return (
     <IntlProvider locale={locale} messages={messages[locale]}>
       <LocalizationProvider dateAdapter={AdapterLuxon}>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider disableTransitionOnChange theme={theme}>
+          <InitColorSchemeScript attribute="[data-color-mode=%s]" />
           <CssBaseline enableColorScheme />
+          {globalStyles}
 
-          <Router future={ROUTER_FUTURE} initialEntries={[location]}>
-            <ReactFlowProvider>
-              <RootLayout />
-            </ReactFlowProvider>
-          </Router>
+          <ColorModeProvider>
+            <Router initialEntries={[location]}>
+              <ReactFlowProvider>
+                <RootLayout />
+              </ReactFlowProvider>
+            </Router>
 
-          <Notifications />
+            <Notifications />
+          </ColorModeProvider>
         </ThemeProvider>
       </LocalizationProvider>
     </IntlProvider>

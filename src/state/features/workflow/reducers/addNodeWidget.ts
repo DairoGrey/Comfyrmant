@@ -34,6 +34,8 @@ export const addNodeWidget = (
 
   if (Array.isArray(input.type)) {
     nodeData.values[widget.name] = input.type[0];
+  } else if (input.type === 'COMBO' && Array.isArray(input.options?.options)) {
+    nodeData.values[widget.name] = input.options?.options[0];
   } else {
     nodeData.values[widget.name] = input?.options?.default;
   }

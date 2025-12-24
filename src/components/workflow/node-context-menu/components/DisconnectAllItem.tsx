@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import LinkOffIcon from '@mui/icons-material/LinkOff';
+import LinkOffIcon from '@mui/icons-material/LinkOffRounded';
 
 import * as workflowAct from '_state/features/workflow/slice';
 

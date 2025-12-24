@@ -1,0 +1,530 @@
+/** converted from node_modules\reactflow\dist\base.css **/
+import React from 'react';
+
+import { GlobalStyles } from '@mui/material';
+
+export const baseCss = (
+  <GlobalStyles
+    styles={{
+      /* this will be exported as base.css and can be used for a basic styling */
+      /* these are the necessary styles for React Flow, they get used by base.css and style.css */
+      '.react-flow': { direction: 'ltr' },
+      '.react-flow__container': {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: '0',
+        left: '0',
+      },
+      '.react-flow__pane': { zIndex: 1, cursor: ['-webkit-grab', 'grab'] },
+      '.react-flow__pane.selection': { cursor: 'pointer' },
+      '.react-flow__pane.dragging': { cursor: ['-webkit-grabbing', 'grabbing'] },
+      '.react-flow__viewport': {
+        transformOrigin: '0 0',
+        zIndex: 2,
+        pointerEvents: 'none',
+      },
+      '.react-flow__renderer': { zIndex: 4 },
+      '.react-flow__selection': { zIndex: 6 },
+      '.react-flow__nodesselection-rect:focus,\n.react-flow__nodesselection-rect:focus-visible': {
+        outline: 'none',
+      },
+      '.react-flow .react-flow__edges': {
+        pointerEvents: 'none',
+        overflow: 'visible',
+      },
+      '.react-flow__edge-path,\n.react-flow__connection-path': {
+        stroke: '#b1b1b7',
+        strokeWidth: 1,
+        fill: 'none',
+      },
+      '.react-flow__edge': { pointerEvents: 'visibleStroke', cursor: 'pointer' },
+      '.react-flow__edge.animated path': {
+        strokeDasharray: '5',
+        WebkitAnimation: 'dashdraw 0.5s linear infinite',
+        animation: 'dashdraw 0.5s linear infinite',
+      },
+      '.react-flow__edge.animated path.react-flow__edge-interaction': {
+        strokeDasharray: 'none',
+        WebkitAnimation: 'none',
+        animation: 'none',
+      },
+      '.react-flow__edge.inactive': { pointerEvents: 'none' },
+      '.react-flow__edge.selected,\n  .react-flow__edge:focus,\n  .react-flow__edge:focus-visible': {
+        outline: 'none',
+      },
+      '.react-flow__edge.selected .react-flow__edge-path,\n  .react-flow__edge:focus .react-flow__edge-path,\n  .react-flow__edge:focus-visible .react-flow__edge-path':
+        {
+          stroke: '#555',
+        },
+      '.react-flow__edge-textwrapper': { pointerEvents: 'all' },
+      '.react-flow__edge-textbg': { fill: 'white' },
+      '.react-flow__edge .react-flow__edge-text': {
+        pointerEvents: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+      },
+      '.react-flow__connection': { pointerEvents: 'none' },
+      '.react-flow__connection .animated': {
+        strokeDasharray: '5',
+        WebkitAnimation: 'dashdraw 0.5s linear infinite',
+        animation: 'dashdraw 0.5s linear infinite',
+      },
+      '.react-flow__connectionline': { zIndex: 1001 },
+      '.react-flow__nodes': { pointerEvents: 'none', transformOrigin: '0 0' },
+      '.react-flow__node': {
+        position: 'absolute',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+        pointerEvents: 'all',
+        transformOrigin: '0 0',
+        boxSizing: 'border-box',
+        cursor: ['-webkit-grab', 'grab'],
+      },
+      '.react-flow__node.dragging': { cursor: ['-webkit-grabbing', 'grabbing'] },
+      '.react-flow__nodesselection': {
+        zIndex: 3,
+        transformOrigin: 'left top',
+        pointerEvents: 'none',
+      },
+      '.react-flow__nodesselection-rect': {
+        position: 'absolute',
+        pointerEvents: 'all',
+        cursor: ['-webkit-grab', 'grab'],
+      },
+      '.react-flow__handle': {
+        position: 'absolute',
+        pointerEvents: 'none',
+        minWidth: '5px',
+        minHeight: '5px',
+        backgroundColor: '#333',
+      },
+      '.react-flow__handle.connectionindicator': {
+        pointerEvents: 'all',
+        cursor: 'crosshair',
+      },
+      '.react-flow__handle-bottom': {
+        top: 'auto',
+        left: '50%',
+        bottom: '-4px',
+        transform: 'translate(-50%, 0)',
+      },
+      '.react-flow__handle-top': {
+        left: '50%',
+        top: '-4px',
+        transform: 'translate(-50%, 0)',
+      },
+      '.react-flow__handle-left': {
+        top: '50%',
+        left: '-4px',
+        transform: 'translate(0, -50%)',
+      },
+      '.react-flow__handle-right': {
+        right: '-4px',
+        top: '50%',
+        transform: 'translate(0, -50%)',
+      },
+      '.react-flow__edgeupdater': { cursor: 'move', pointerEvents: 'all' },
+      '.react-flow__panel': { position: 'absolute', zIndex: 5, margin: '15px' },
+      '.react-flow__panel.top': { top: '0' },
+      '.react-flow__panel.bottom': { bottom: '0' },
+      '.react-flow__panel.left': { left: '0' },
+      '.react-flow__panel.right': { right: '0' },
+      '.react-flow__panel.center': { left: '50%', transform: 'translateX(-50%)' },
+      '.react-flow__attribution': {
+        fontSize: '10px',
+        background: 'rgba(255, 255, 255, 0.5)',
+        padding: '2px 3px',
+        margin: '0',
+      },
+      '.react-flow__attribution a': { textDecoration: 'none', color: '#999' },
+      '@-webkit-keyframes dashdraw': { from: { strokeDashoffset: 10 } },
+      '@keyframes dashdraw': { from: { strokeDashoffset: 10 } },
+      '.react-flow__edgelabel-renderer': {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+      },
+      '.react-flow__node-default,\n.react-flow__node-input,\n.react-flow__node-output,\n.react-flow__node-group': {
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: '#bbb',
+      },
+      '.react-flow__node-default.selected,\n  .react-flow__node-default:focus,\n  .react-flow__node-default:focus-visible,\n  .react-flow__node-input.selected,\n  .react-flow__node-input:focus,\n  .react-flow__node-input:focus-visible,\n  .react-flow__node-output.selected,\n  .react-flow__node-output:focus,\n  .react-flow__node-output:focus-visible,\n  .react-flow__node-group.selected,\n  .react-flow__node-group:focus,\n  .react-flow__node-group:focus-visible':
+        {
+          outline: 'none',
+          border: '1px solid #555',
+        },
+      '.react-flow__nodesselection-rect,\n.react-flow__selection': {
+        background: 'rgba(150, 150, 180, 0.1)',
+        border: '1px dotted rgba(155, 155, 155, 0.8)',
+      },
+      '.react-flow__controls': { boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.08)' },
+      '.react-flow__controls-button': {
+        border: 'none',
+        background: '#fefefe',
+        borderBottom: '1px solid #eee',
+        boxSizing: 'content-box',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '16px',
+        height: '16px',
+        cursor: 'pointer',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+        padding: '5px',
+      },
+      '.react-flow__controls-button:hover': { background: '#f4f4f4' },
+      '.react-flow__controls-button svg': {
+        width: '100%',
+        maxWidth: '12px',
+        maxHeight: '12px',
+      },
+      '.react-flow__controls-button:disabled': { pointerEvents: 'none' },
+      '.react-flow__controls-button:disabled svg': { fillOpacity: 0.4 },
+      '.react-flow__minimap': { backgroundColor: '#fff' },
+      '.react-flow__minimap svg': { display: 'block' },
+      '.react-flow__resize-control': { position: 'absolute' },
+      '.react-flow__resize-control.left,\n.react-flow__resize-control.right': {
+        cursor: 'ew-resize',
+      },
+      '.react-flow__resize-control.top,\n.react-flow__resize-control.bottom': {
+        cursor: 'ns-resize',
+      },
+      '.react-flow__resize-control.top.left,\n.react-flow__resize-control.bottom.right': {
+        cursor: 'nwse-resize',
+      },
+      '.react-flow__resize-control.bottom.left,\n.react-flow__resize-control.top.right': {
+        cursor: 'nesw-resize',
+      },
+      '.react-flow__resize-control.handle': {
+        width: '4px',
+        height: '4px',
+        border: '1px solid #fff',
+        borderRadius: '1px',
+        backgroundColor: '#3367d9',
+        transform: 'translate(-50%, -50%)',
+      },
+      '.react-flow__resize-control.handle.left': { left: '0', top: '50%' },
+      '.react-flow__resize-control.handle.right': { left: '100%', top: '50%' },
+      '.react-flow__resize-control.handle.top': { left: '50%', top: '0' },
+      '.react-flow__resize-control.handle.bottom': { left: '50%', top: '100%' },
+      '.react-flow__resize-control.handle.top.left': { left: '0' },
+      '.react-flow__resize-control.handle.bottom.left': { left: '0' },
+      '.react-flow__resize-control.handle.top.right': { left: '100%' },
+      '.react-flow__resize-control.handle.bottom.right': { left: '100%' },
+      '.react-flow__resize-control.line': {
+        borderColor: '#3367d9',
+        borderWidth: '0',
+        borderStyle: 'solid',
+      },
+      '.react-flow__resize-control.line.left,\n.react-flow__resize-control.line.right': {
+        width: '1px',
+        transform: 'translate(-50%, 0)',
+        top: '0',
+        height: '100%',
+      },
+      '.react-flow__resize-control.line.left': {
+        left: '0',
+        borderLeftWidth: '1px',
+      },
+      '.react-flow__resize-control.line.right': {
+        left: '100%',
+        borderRightWidth: '1px',
+      },
+      '.react-flow__resize-control.line.top,\n.react-flow__resize-control.line.bottom': {
+        height: '1px',
+        transform: 'translate(0, -50%)',
+        left: '0',
+        width: '100%',
+      },
+      '.react-flow__resize-control.line.top': { top: '0', borderTopWidth: '1px' },
+      '.react-flow__resize-control.line.bottom': {
+        borderBottomWidth: '1px',
+        top: '100%',
+      },
+    }}
+  />
+);
+
+export const styleCss = (
+  <GlobalStyles
+    styles={{
+      '.react-flow': { direction: 'ltr' },
+      '.react-flow__container': {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: '0',
+        left: '0',
+      },
+      '.react-flow__pane': { zIndex: 1, cursor: ['-webkit-grab', 'grab'] },
+      '.react-flow__pane.selection': { cursor: 'pointer' },
+      '.react-flow__pane.dragging': { cursor: ['-webkit-grabbing', 'grabbing'] },
+      '.react-flow__viewport': {
+        transformOrigin: '0 0',
+        zIndex: 2,
+        pointerEvents: 'none',
+      },
+      '.react-flow__renderer': { zIndex: 4 },
+      '.react-flow__selection': { zIndex: 6 },
+      '.react-flow__nodesselection-rect:focus,\n.react-flow__nodesselection-rect:focus-visible': {
+        outline: 'none',
+      },
+      '.react-flow .react-flow__edges': {
+        pointerEvents: 'none',
+        overflow: 'visible',
+      },
+      '.react-flow__edge-path,\n.react-flow__connection-path': {
+        stroke: '#b1b1b7',
+        strokeWidth: 1,
+        fill: 'none',
+      },
+      '.react-flow__edge': { pointerEvents: 'visibleStroke', cursor: 'pointer' },
+      '.react-flow__edge.animated path': {
+        strokeDasharray: '5',
+        WebkitAnimation: 'dashdraw 0.5s linear infinite',
+        animation: 'dashdraw 0.5s linear infinite',
+      },
+      '.react-flow__edge.animated path.react-flow__edge-interaction': {
+        strokeDasharray: 'none',
+        WebkitAnimation: 'none',
+        animation: 'none',
+      },
+      '.react-flow__edge.inactive': { pointerEvents: 'none' },
+      '.react-flow__edge.selected,\n  .react-flow__edge:focus,\n  .react-flow__edge:focus-visible': {
+        outline: 'none',
+      },
+      '.react-flow__edge.selected .react-flow__edge-path,\n  .react-flow__edge:focus .react-flow__edge-path,\n  .react-flow__edge:focus-visible .react-flow__edge-path':
+        {
+          stroke: '#555',
+        },
+      '.react-flow__edge-textwrapper': { pointerEvents: 'all' },
+      '.react-flow__edge-textbg': { fill: 'white' },
+      '.react-flow__edge .react-flow__edge-text': {
+        pointerEvents: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+      },
+      '.react-flow__connection': { pointerEvents: 'none' },
+      '.react-flow__connection .animated': {
+        strokeDasharray: '5',
+        WebkitAnimation: 'dashdraw 0.5s linear infinite',
+        animation: 'dashdraw 0.5s linear infinite',
+      },
+      '.react-flow__connectionline': { zIndex: 1001 },
+      '.react-flow__nodes': { pointerEvents: 'none', transformOrigin: '0 0' },
+      '.react-flow__node': {
+        position: 'absolute',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+        pointerEvents: 'all',
+        transformOrigin: '0 0',
+        boxSizing: 'border-box',
+        cursor: ['-webkit-grab', 'grab'],
+      },
+      '.react-flow__node.dragging': { cursor: ['-webkit-grabbing', 'grabbing'] },
+      '.react-flow__nodesselection': {
+        zIndex: 3,
+        transformOrigin: 'left top',
+        pointerEvents: 'none',
+      },
+      '.react-flow__nodesselection-rect': {
+        position: 'absolute',
+        pointerEvents: 'all',
+        cursor: ['-webkit-grab', 'grab'],
+      },
+      '.react-flow__handle': {
+        position: 'absolute',
+        pointerEvents: 'none',
+        minWidth: '5px',
+        minHeight: '5px',
+        width: '6px',
+        height: '6px',
+        background: '#1a192b',
+        border: '1px solid white',
+        borderRadius: '100%',
+      },
+      '.react-flow__handle.connectionindicator': {
+        pointerEvents: 'all',
+        cursor: 'crosshair',
+      },
+      '.react-flow__handle-bottom': {
+        top: 'auto',
+        left: '50%',
+        bottom: '-4px',
+        transform: 'translate(-50%, 0)',
+      },
+      '.react-flow__handle-top': {
+        left: '50%',
+        top: '-4px',
+        transform: 'translate(-50%, 0)',
+      },
+      '.react-flow__handle-left': {
+        top: '50%',
+        left: '-4px',
+        transform: 'translate(0, -50%)',
+      },
+      '.react-flow__handle-right': {
+        right: '-4px',
+        top: '50%',
+        transform: 'translate(0, -50%)',
+      },
+      '.react-flow__edgeupdater': { cursor: 'move', pointerEvents: 'all' },
+      '.react-flow__panel': { position: 'absolute', zIndex: 5, margin: '15px' },
+      '.react-flow__panel.top': { top: '0' },
+      '.react-flow__panel.bottom': { bottom: '0' },
+      '.react-flow__panel.left': { left: '0' },
+      '.react-flow__panel.right': { right: '0' },
+      '.react-flow__panel.center': { left: '50%', transform: 'translateX(-50%)' },
+      '.react-flow__attribution': {
+        fontSize: '10px',
+        background: 'rgba(255, 255, 255, 0.5)',
+        padding: '2px 3px',
+        margin: '0',
+      },
+      '.react-flow__attribution a': { textDecoration: 'none', color: '#999' },
+      '@-webkit-keyframes dashdraw': { from: { strokeDashoffset: 10 } },
+      '@keyframes dashdraw': { from: { strokeDashoffset: 10 } },
+      '.react-flow__edgelabel-renderer': {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+      },
+      '.react-flow__edge.updating .react-flow__edge-path': { stroke: '#777' },
+      '.react-flow__edge-text': { fontSize: '10px' },
+      '.react-flow__node.selectable:focus,\n  .react-flow__node.selectable:focus-visible': {
+        outline: 'none',
+      },
+      '.react-flow__node-default,\n.react-flow__node-input,\n.react-flow__node-output,\n.react-flow__node-group': {
+        padding: '10px',
+        borderRadius: '3px',
+        width: '150px',
+        fontSize: '12px',
+        color: '#222',
+        textAlign: 'center',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: '#1a192b',
+        backgroundColor: 'white',
+      },
+      '.react-flow__node-default.selectable:hover, .react-flow__node-input.selectable:hover, .react-flow__node-output.selectable:hover, .react-flow__node-group.selectable:hover':
+        {
+          boxShadow: '0 1px 4px 1px rgba(0, 0, 0, 0.08)',
+        },
+      '.react-flow__node-default.selectable.selected,\n    .react-flow__node-default.selectable:focus,\n    .react-flow__node-default.selectable:focus-visible,\n    .react-flow__node-input.selectable.selected,\n    .react-flow__node-input.selectable:focus,\n    .react-flow__node-input.selectable:focus-visible,\n    .react-flow__node-output.selectable.selected,\n    .react-flow__node-output.selectable:focus,\n    .react-flow__node-output.selectable:focus-visible,\n    .react-flow__node-group.selectable.selected,\n    .react-flow__node-group.selectable:focus,\n    .react-flow__node-group.selectable:focus-visible':
+        {
+          boxShadow: '0 0 0 0.5px #1a192b',
+        },
+      '.react-flow__node-group': { backgroundColor: 'rgba(240, 240, 240, 0.25)' },
+      '.react-flow__nodesselection-rect,\n.react-flow__selection': {
+        background: 'rgba(0, 89, 220, 0.08)',
+        border: '1px dotted rgba(0, 89, 220, 0.8)',
+      },
+      '.react-flow__nodesselection-rect:focus,\n  .react-flow__nodesselection-rect:focus-visible,\n  .react-flow__selection:focus,\n  .react-flow__selection:focus-visible':
+        {
+          outline: 'none',
+        },
+      '.react-flow__controls': { boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.08)' },
+      '.react-flow__controls-button': {
+        border: 'none',
+        background: '#fefefe',
+        borderBottom: '1px solid #eee',
+        boxSizing: 'content-box',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '16px',
+        height: '16px',
+        cursor: 'pointer',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        userSelect: 'none',
+        padding: '5px',
+      },
+      '.react-flow__controls-button:hover': { background: '#f4f4f4' },
+      '.react-flow__controls-button svg': {
+        width: '100%',
+        maxWidth: '12px',
+        maxHeight: '12px',
+      },
+      '.react-flow__controls-button:disabled': { pointerEvents: 'none' },
+      '.react-flow__controls-button:disabled svg': { fillOpacity: 0.4 },
+      '.react-flow__minimap': { backgroundColor: '#fff' },
+      '.react-flow__minimap svg': { display: 'block' },
+      '.react-flow__resize-control': { position: 'absolute' },
+      '.react-flow__resize-control.left,\n.react-flow__resize-control.right': {
+        cursor: 'ew-resize',
+      },
+      '.react-flow__resize-control.top,\n.react-flow__resize-control.bottom': {
+        cursor: 'ns-resize',
+      },
+      '.react-flow__resize-control.top.left,\n.react-flow__resize-control.bottom.right': {
+        cursor: 'nwse-resize',
+      },
+      '.react-flow__resize-control.bottom.left,\n.react-flow__resize-control.top.right': {
+        cursor: 'nesw-resize',
+      },
+      '.react-flow__resize-control.handle': {
+        width: '4px',
+        height: '4px',
+        border: '1px solid #fff',
+        borderRadius: '1px',
+        backgroundColor: '#3367d9',
+        transform: 'translate(-50%, -50%)',
+      },
+      '.react-flow__resize-control.handle.left': { left: '0', top: '50%' },
+      '.react-flow__resize-control.handle.right': { left: '100%', top: '50%' },
+      '.react-flow__resize-control.handle.top': { left: '50%', top: '0' },
+      '.react-flow__resize-control.handle.bottom': { left: '50%', top: '100%' },
+      '.react-flow__resize-control.handle.top.left': { left: '0' },
+      '.react-flow__resize-control.handle.bottom.left': { left: '0' },
+      '.react-flow__resize-control.handle.top.right': { left: '100%' },
+      '.react-flow__resize-control.handle.bottom.right': { left: '100%' },
+      '.react-flow__resize-control.line': {
+        borderColor: '#3367d9',
+        borderWidth: '0',
+        borderStyle: 'solid',
+      },
+      '.react-flow__resize-control.line.left,\n.react-flow__resize-control.line.right': {
+        width: '1px',
+        transform: 'translate(-50%, 0)',
+        top: '0',
+        height: '100%',
+      },
+      '.react-flow__resize-control.line.left': {
+        left: '0',
+        borderLeftWidth: '1px',
+      },
+      '.react-flow__resize-control.line.right': {
+        left: '100%',
+        borderRightWidth: '1px',
+      },
+      '.react-flow__resize-control.line.top,\n.react-flow__resize-control.line.bottom': {
+        height: '1px',
+        transform: 'translate(0, -50%)',
+        left: '0',
+        width: '100%',
+      },
+      '.react-flow__resize-control.line.top': { top: '0', borderTopWidth: '1px' },
+      '.react-flow__resize-control.line.bottom': {
+        borderBottomWidth: '1px',
+        top: '100%',
+      },
+    }}
+  />
+);

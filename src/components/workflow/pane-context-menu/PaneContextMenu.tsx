@@ -100,12 +100,12 @@ export const PaneContextMenu: FC<Props> = memo(({ isOpen, position, onClose }) =
     <ClickAwayListener onClickAway={onClose}>
       <Drawer anchor="bottom" variant="persistent" open={isOpen} onClose={onClose} autoFocus={false}>
         <Grid container columns={24} flexShrink={0} height={420}>
-          <Grid item xs={5} flexShrink={0} height="100%" overflow="hidden">
+          <Grid size={5} flexShrink={0} height="100%" overflow="hidden">
             <Box height="100%" sx={{ overflowY: 'auto' }}>
               <CategoryMenu tree={tree} selectedCategory={category} onCategorySelect={handleCategorySelect} />
             </Box>
           </Grid>
-          <Grid item xs={19} flexShrink={0} height="100%" overflow="hidden">
+          <Grid size={19} flexShrink={0} height="100%" overflow="hidden">
             <Stack gap={1} overflow="hidden" height="100%">
               <NodeBrowser
                 searchValue={search}

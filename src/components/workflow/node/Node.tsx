@@ -3,10 +3,12 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { NodeProps, useReactFlow } from 'reactflow';
 
-import { Backdrop, Divider, Paper, Stack, Typography, useTheme } from '@mui/material';
+import { Backdrop, Box, Divider, Paper, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from '@mui/icons-material/LockRounded';
+import TurnRightIcon from '@mui/icons-material/TurnRightRounded';
 
+import * as workflowChecks from '_state/features/workflow/checks';
 import * as workflowAct from '_state/features/workflow/slice';
 import { NodeStateData } from '_state/features/workflow/types';
 import { useColorMode } from '_theme';
@@ -38,8 +40,8 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
   } = data;
   const { title, isOutput } = data.nodeType;
 
-  const hasWidgets = widgets ? Object.keys(widgets).length > 0 : false;
-  const hasPins = Object.values(inputs).filter((input) => !input.hidden).length > 0 || Object.keys(outputs).length > 0;
+  const hasWidgets = workflowChecks.hasWidgets(data);
+  const hasPins = workflowChecks.hasInputs(data, true) || workflowChecks.hasOutputs(data);
 
   const theme = useTheme();
   const colorMode = useColorMode();
@@ -47,7 +49,7 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
 
   const dispatch = useDispatch();
 
-  const backgroundColor = nodeColor ? backgroundByType(nodeColor, colorMode) : undefined;
+  const backgroundColor = nodeColor ? backgroundByType(nodeColor, theme, colorMode) : undefined;
 
   const handleResize = useCallback(() => {
     dispatch(workflowAct.toggleNodeResizing(id));
@@ -100,16 +102,30 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
         height="100%"
         sx={{
           backgroundColor,
-          border: '1px solid',
-          borderColor: locked ? theme.palette.divider : 'transparent',
+          border: '2px solid',
+          borderColor: bypass ? theme.vars.palette.warning.main : locked ? theme.vars.palette.divider : 'transparent',
           userSelect: 'none',
         }}
       >
         <Header
           id={id}
           title={title}
+          nodeColor={nodeColor}
           tags={tags && <Tags tags={tags} onDelete={handleTagDelete} />}
-          lockStatus={locked ? <LockIcon color="secondary" /> : undefined}
+          lockStatus={
+            locked ? (
+              <Tooltip placement="top" title="Locked">
+                <LockIcon color="secondary" />
+              </Tooltip>
+            ) : undefined
+          }
+          bypassStatus={
+            bypass ? (
+              <Tooltip placement="top" title="Bypass enabled">
+                <TurnRightIcon color="warning" />
+              </Tooltip>
+            ) : undefined
+          }
         />
         {hasPins && (
           <>
@@ -120,7 +136,34 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
         {!collapsed && hasWidgets && (
           <>
             <Divider />
-            <Widgets id={id} widgets={widgets!} inputs={inputs} outputs={outputs} />
+            <Box position="relative" height={!isOutput ? '100%' : undefined}>
+              <Widgets fullHeight={!isOutput} id={id} widgets={widgets!} inputs={inputs} outputs={outputs} />
+
+              <Backdrop
+                open={bypass}
+                sx={{
+                  position: 'absolute',
+                  bottom: 1,
+                  right: 1,
+                  left: 1,
+                  top: 1,
+                  borderRadius: 1,
+                  zIndex: 10,
+                  backdropFilter: 'blur(2px)',
+                }}
+              >
+                <Stack alignItems="center" justifyContent="center">
+                  <Typography
+                    color="common.white"
+                    variant="button"
+                    fontSize={24}
+                    sx={{ textShadow: '0px 0px 2px black' }}
+                  >
+                    BYPASS
+                  </Typography>
+                </Stack>
+              </Backdrop>
+            </Box>
           </>
         )}
         {!collapsed && isOutput && (
@@ -129,13 +172,6 @@ export const Node: FC<NodeProps<NodeStateData>> = memo((props) => {
             <Results id={id} inputs={inputs} />
           </>
         )}
-        <Backdrop open={bypass} sx={{ borderRadius: 1 }}>
-          <Stack alignItems="center" justifyContent="center">
-            <Typography color="common.white" variant="button" fontSize={24}>
-              BYPASS
-            </Typography>
-          </Stack>
-        </Backdrop>
       </Stack>
 
       <Errors id={id} errors={errors} />

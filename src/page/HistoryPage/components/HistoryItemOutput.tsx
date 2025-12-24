@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IconButton, Stack } from '@mui/material';
 
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileDownloadIcon from '@mui/icons-material/FileDownloadRounded';
 
 import { ImageOutputResponse } from '_state/features/api/types';
 import * as blobsSel from '_state/features/blobs/selector';

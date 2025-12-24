@@ -10,13 +10,13 @@ import { ProsemirrorAdapterProvider, usePluginViewFactory } from '@prosemirror-a
 
 import { Button, ButtonGroup, Grid, Stack } from '@mui/material';
 
-import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
-import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
-import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
-import FormatBoldIcon from '@mui/icons-material/FormatBold';
-import FormatItalicIcon from '@mui/icons-material/FormatItalic';
-import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenterRounded';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustifyRounded';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeftRounded';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRightRounded';
+import FormatBoldIcon from '@mui/icons-material/FormatBoldRounded';
+import FormatItalicIcon from '@mui/icons-material/FormatItalicRounded';
+import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlinedRounded';
 
 import { slash, SlashView } from './SlashView';
 
@@ -105,10 +105,8 @@ export const MarkdownEditor: FC<Props> = ({ value = '', onChange }) => {
   if (previewEnabled) {
     return (
       <Grid container>
-        <Grid item xs={6}>
-          {editor}
-        </Grid>
-        <Grid item xs={6}></Grid>
+        <Grid size={6}>{editor}</Grid>
+        <Grid size={6}></Grid>
       </Grid>
     );
   }
