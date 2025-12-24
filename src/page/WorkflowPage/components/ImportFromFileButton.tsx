@@ -17,9 +17,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import SaveIcon from '@mui/icons-material/Save';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import FileUploadIcon from '@mui/icons-material/FileUploadRounded';
+import SaveIcon from '@mui/icons-material/SaveRounded';
+import UploadFileIcon from '@mui/icons-material/UploadFileRounded';
 
 import * as workflowAct from '_state/features/workflow/slice';
 

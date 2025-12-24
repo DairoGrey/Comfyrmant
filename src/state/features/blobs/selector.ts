@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from '_state/store';
+import { firstFree } from '_state/utils';
 
 import { ImageOutputResponse } from '../api/types';
 
@@ -14,7 +15,7 @@ const getBlobs = (state: RootState) => state[slice.name];
 const getBlobsById = createSelector(getBlobs, (blobs) => blobs.byId);
 const getUrls = createSelector(getBlobs, (blobs) => blobs.urls);
 
-export const getBlobById = createSelector([getBlobsById, (_, id: string) => id], (blobs, id) => blobs.byId[id]);
+export const getBlobById = createSelector([getBlobsById, firstFree<string>], (blobs, id) => blobs.byId[id]);
 
 export const getBlobUrlByImage = createSelector(
   [getUrls, (_, image: ImageOutputResponse) => imageToStr(image)],

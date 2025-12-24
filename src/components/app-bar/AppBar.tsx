@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AppBar as _AppBar, Divider, IconButton, Stack, Tab, Tabs, Toolbar, Typography } from '@mui/material';
 
-import HistoryIcon from '@mui/icons-material/History';
-import MenuIcon from '@mui/icons-material/Menu';
-import SchemaIcon from '@mui/icons-material/Schema';
-import WorkspacesIcon from '@mui/icons-material/Workspaces';
+import HistoryIcon from '@mui/icons-material/HistoryRounded';
+import MenuIcon from '@mui/icons-material/MenuRounded';
+import SchemaIcon from '@mui/icons-material/SchemaRounded';
+import WorkspacesIcon from '@mui/icons-material/WorkspacesRounded';
 
 import { ColorModeToggle } from '_components/color-mode-toggle';
 import { ROUTES } from '_routes';

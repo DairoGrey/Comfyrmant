@@ -3,11 +3,9 @@ import { useSelector } from 'react-redux';
 import ReactSyntaxHighlighter from 'react-syntax-highlighter';
 import * as styles from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-import { useTheme } from '@mui/material';
-
 import * as settingsSel from '_state/features/settings/selector';
 import { CodeTheme } from '_state/features/settings/types';
-import { ColorMode } from '_theme';
+import { ColorMode, useColorMode } from '_theme';
 
 const STYLES: Record<ColorMode, Record<CodeTheme, any>> = {
   [ColorMode.Light]: {
@@ -34,10 +32,10 @@ type Props = {
 };
 
 export const SyntaxHighlighter: FC<Props> = ({ language, code }) => {
-  const theme = useTheme();
+  const colorMode = useColorMode();
 
   const codeTheme = useSelector(settingsSel.getCodeTheme);
-  const style = STYLES[theme.palette.mode][codeTheme];
+  const style = STYLES[colorMode][codeTheme];
 
   return (
     <ReactSyntaxHighlighter

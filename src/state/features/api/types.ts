@@ -30,17 +30,24 @@ export type HistoryItemApiResponse = {
 export type HistoryApiResponse = Record<string, HistoryItemApiResponse>;
 
 export type ObjectItemApiResponse = {
+  api_node: boolean;
   category: string;
   description: string;
-  display_name: string;
+  deprecated: boolean;
+  display_name: string | null;
   name: string;
   input: {
     required: Record<string, any>;
   };
+  input_order: { required: string[] };
   output: (string | string[])[];
   output_name: string[];
-  output_is_list: boolean[];
+  output_is_list: (boolean | null)[];
   output_node: boolean;
+  output_tooltips: (string | null)[];
+  output_matchtypes: string | null;
+  experimental: boolean;
+  python_module: string;
 };
 
 export type ObjectInfoApiResponse = {

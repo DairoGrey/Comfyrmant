@@ -1,21 +1,21 @@
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { FC } from 'react';
 
 import { eventBus, EventName } from '_eventBus';
 
 import { IconButton, InputAdornment, Stack, TextField, Tooltip } from '@mui/material';
 
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import ShuffleIcon from '@mui/icons-material/Shuffle';
-import ShuffleOnIcon from '@mui/icons-material/ShuffleOn';
+import AddIcon from '@mui/icons-material/AddRounded';
+import RemoveIcon from '@mui/icons-material/RemoveRounded';
+import ShuffleOnIcon from '@mui/icons-material/ShuffleOnRounded';
+import ShuffleIcon from '@mui/icons-material/ShuffleRounded';
 
 import { NodeInputState, NodeOutputState, NodeWidgetState } from '_state/features/workflow/types';
 
 import { useFloatSteps } from './hooks/useFloatSteps';
 import { useIntSteps } from './hooks/useIntSteps';
 
-const PARSER: Record<string, (v: unknown, precision?: number) => unknown> = {
+const PARSER: Record<string, ((v: unknown, precision?: number) => unknown) | null> = {
   INT: (v: unknown, places: number = 0) => {
     if (typeof v !== 'string') {
       return null;
@@ -35,12 +35,14 @@ const PARSER: Record<string, (v: unknown, precision?: number) => unknown> = {
     return Number.isNaN(n) ? null : Number(n.toFixed(places));
   },
   STRING: (v: unknown) => v,
+  UNKNOWN: null,
 };
 
-const SERIALIZER: Record<string, (v: unknown, places?: number) => string> = {
+const SERIALIZER: Record<string, ((v: unknown, places?: number) => string) | null> = {
   INT: (v: unknown, places: number = 0) => (v === null ? '' : Number(v).toFixed(places)),
   FLOAT: (v: unknown, places: number = 2) => (v === null || Number.isNaN(v) ? '' : Number(v).toFixed(places)),
   STRING: (v: unknown) => v as string,
+  UNKNOWN: null,
 };
 
 type NumberAdornmentProps = {
@@ -142,11 +144,10 @@ type Props = {
 };
 
 export const InputFieldWidget: FC<Props> = memo(({ value, widget, input, output, onChange, onOptionsChange }) => {
-  const type = input?.type || output?.type;
+  const type = ((input?.type || output?.type) as string) || 'UNKNOWN';
 
-  if (!type || Array.isArray(type)) {
-    return null;
-  }
+  const parse = PARSER[type];
+  const serialize = SERIALIZER[type];
 
   const name = input?.name || output?.name;
   const multiline = (input?.options?.multiline || widget?.options?.multiline) as boolean | undefined;
@@ -154,8 +155,17 @@ export const InputFieldWidget: FC<Props> = memo(({ value, widget, input, output,
 
   const places = round && round < 1 ? Math.abs(Math.log10(round) + 1) : undefined;
 
-  const parse = PARSER[type];
-  const serialize = SERIALIZER[type];
+  const [tempValue, setTempValue] = useState(() => (serialize ? serialize(value, places) : ''));
+
+  useEffect(() => {
+    if (serialize) {
+      setTempValue(serialize(value, places));
+    }
+  }, [value, places, serialize]);
+
+  if (!type || Array.isArray(type)) {
+    return null;
+  }
 
   const Adornment: FC<NumberAdornmentProps> | null = ADORNMENT[type] || null;
 
@@ -170,11 +180,12 @@ export const InputFieldWidget: FC<Props> = memo(({ value, widget, input, output,
       multiline={multiline}
       minRows={multiline ? 3 : undefined}
       label={name}
-      value={serialize(value, places)}
+      value={tempValue}
       InputProps={{
         endAdornment,
       }}
-      onChange={(e) => onChange(parse(e.target.value, places))}
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={(e) => onChange(parse?.(e.target.value, places))}
     />
   );
 });

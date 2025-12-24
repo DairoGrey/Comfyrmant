@@ -20,7 +20,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from '@mui/icons-material/CloseRounded';
 
 import { useRouteConditions } from '_routes';
 import * as settingsSel from '_state/features/settings/selector';

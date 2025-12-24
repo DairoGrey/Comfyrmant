@@ -46,12 +46,12 @@ export const ConnectionLine: FC<ConnectionLineComponentProps> = ({ fromNode, fro
   const [path] = EDGE_TYPE[edgeType](mapToPathProps(props));
 
   const type = getConnectionType(fromNode, fromHandle);
-  const color = type ? colorByType(type, colorMode) : theme.palette.divider;
+  const color = type ? colorByType(type, theme, colorMode) : theme.vars.palette.divider;
 
   return (
     <g>
       <path fill="none" stroke={color} strokeWidth={1.5} d={path} />
-      <circle cx={toX} cy={toY} fill={color} r={3} stroke={theme.palette.divider} strokeWidth={1.5} />
+      <circle cx={toX} cy={toY} fill={color} r={3} stroke={theme.vars.palette.divider} strokeWidth={1.5} />
     </g>
   );
 };

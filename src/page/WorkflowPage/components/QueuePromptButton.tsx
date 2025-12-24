@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { Button } from '@mui/material';
 
-import QueueIcon from '@mui/icons-material/Queue';
+import QueueIcon from '@mui/icons-material/QueueRounded';
 
 import * as workflowAct from '_state/features/workflow/slice';
 

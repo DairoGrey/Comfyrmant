@@ -4,13 +4,13 @@ import { Position } from 'reactflow';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { Box, Stack, styled, Tooltip, Typography } from '@mui/material';
+import { Box, Stack, styled, Tooltip, Typography, useTheme } from '@mui/material';
 
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import CircleIcon from '@mui/icons-material/Circle';
-import HexagonIcon from '@mui/icons-material/Hexagon';
-import InfoOutlined from '@mui/icons-material/InfoOutlined';
-import SquareIcon from '@mui/icons-material/Square';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import CircleIcon from '@mui/icons-material/CircleRounded';
+import HexagonIcon from '@mui/icons-material/HexagonRounded';
+import InfoOutlined from '@mui/icons-material/InfoOutlineRounded';
+import SquareIcon from '@mui/icons-material/SquareRounded';
 
 import * as settingsSel from '_state/features/settings/selector';
 import { WorkflowHandleType } from '_state/features/settings/types';
@@ -71,11 +71,17 @@ type InputViewProps = {
 
 export const InputView: FC<InputViewProps> = ({ input }) => {
   const colorMode = useColorMode();
+  const theme = useTheme();
 
   const defaultValue = getInputDefaultValue(input);
 
   return (
-    <HandleView id={input.name} position={Position.Left} label={input.name} color={colorByType(input.type, colorMode)}>
+    <HandleView
+      id={input.name}
+      position={Position.Left}
+      label={input.name}
+      color={colorByType(input.type, theme, colorMode)}
+    >
       {!isUndefined(defaultValue) && (
         <Tooltip title={String(defaultValue)} placement="right">
           <InfoOutlined color="disabled" sx={{ fontSize: 10 }} />
@@ -91,13 +97,14 @@ type OutputViewProps = {
 
 export const OutputView: FC<OutputViewProps> = ({ output }) => {
   const colorMode = useColorMode();
+  const theme = useTheme();
 
   return (
     <HandleView
       id={output.name}
       position={Position.Right}
       label={output.name}
-      color={colorByType(output.type, colorMode)}
+      color={colorByType(output.type, theme, colorMode)}
     />
   );
 };

@@ -3,10 +3,10 @@ import { FC } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { ListItemIcon, ListItemText, MenuItem, Typography } from '@mui/material';
+import { ListItemIcon, ListItemText, MenuItem, Typography, useTheme } from '@mui/material';
 
-import CircleIcon from '@mui/icons-material/Circle';
-import EditOffIcon from '@mui/icons-material/EditOff';
+import CircleIcon from '@mui/icons-material/CircleRounded';
+import EditOffIcon from '@mui/icons-material/EditOffRounded';
 
 import { SubMenuItem } from '_components/context-menu';
 import * as workflowAct from '_state/features/workflow/slice';
@@ -42,6 +42,7 @@ type Props = {
 
 export const ConvertToInputSubMenu: FC<Props> = ({ id, inputs, widgets, onClose }) => {
   const colorMode = useColorMode();
+  const theme = useTheme();
 
   const dispatch = useDispatch();
 
@@ -66,14 +67,14 @@ export const ConvertToInputSubMenu: FC<Props> = ({ id, inputs, widgets, onClose 
             return (
               <Item
                 key={widget.name}
-                icon={<CircleIcon sx={{ color: colorByType(input.type, colorMode) }} />}
+                icon={<CircleIcon sx={{ color: colorByType(input.type, theme, colorMode) }} />}
                 label={
                   <FormattedMessage
                     id="ui.node.context-menu.convert-widget-to-input.item"
                     defaultMessage={`<colored>{widget}</colored>`}
                     values={{
                       colored: (chunks) => (
-                        <Typography component="span" color={colorByType(input.type, colorMode)}>
+                        <Typography component="span" color={colorByType(input.type, theme, colorMode)}>
                           {chunks}
                         </Typography>
                       ),

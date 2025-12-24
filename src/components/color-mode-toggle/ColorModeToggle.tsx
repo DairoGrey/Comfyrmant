@@ -3,8 +3,8 @@ import { FormattedMessage } from 'react-intl';
 
 import { IconButton, Tooltip } from '@mui/material';
 
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkModeRounded';
+import LightModeIcon from '@mui/icons-material/LightModeRounded';
 
 const DARK_MODE_NAME = (
   <FormattedMessage

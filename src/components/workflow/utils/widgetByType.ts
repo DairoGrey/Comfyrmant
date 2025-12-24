@@ -48,6 +48,10 @@ export const inputWidgetByType = (widget: NodeWidgetState, inputs: Record<string
     return [SelectFieldWidget, { values: type, widget, input }] as const;
   }
 
+  if (type === 'COMBO' && Array.isArray(input.options?.options)) {
+    return [SelectFieldWidget, { values: input.options?.options, widget, input }] as const;
+  }
+
   return [INPUT_WIDGET_TYPE[type], { widget, input }] as const;
 };
 

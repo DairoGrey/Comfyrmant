@@ -1,4 +1,4 @@
-import { en_US } from './message.en-US';
+import { en_US } from './messages.en-US';
 import { ru_RU } from './messages.ru-RU';
 
 export const messages: Record<string, Record<string, string>> = {

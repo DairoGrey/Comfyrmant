@@ -13,7 +13,7 @@ export const slash = slashFactory('Commands');
 
 export const SlashView = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const slashProvider = useRef<SlashProvider>();
+  const slashProvider = useRef<SlashProvider>(null);
 
   const { view, prevState } = usePluginViewContext();
   const [loading, get] = useInstance();
@@ -32,11 +32,6 @@ export const SlashView = () => {
     }
     slashProvider.current = new SlashProvider({
       content: div,
-      tippyOptions: {
-        onMount: () => {
-          (ref.current?.children[0] as HTMLButtonElement).focus();
-        },
-      },
     });
 
     return () => {

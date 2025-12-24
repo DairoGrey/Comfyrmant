@@ -18,13 +18,15 @@ const STYLES: Record<'dark' | 'light', Partial<Props>> = {
 
 export const MiniMap = styled(_MiniMap)<MiniMapProps>(({ theme }) => ({
   '&.react-flow__minimap': {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.vars.palette.background.paper,
     '& > svg': {
-      borderRadius: theme.shape.borderRadius,
-      border: `1px solid ${theme.palette.divider}`,
+      borderRadius: theme.vars.shape.borderRadius,
+      border: `1px solid ${theme.vars.palette.divider}`,
     },
     '& .react-flow__minimap-mask': {
-      fill: STYLES[theme.palette.mode].mask,
+      ...theme.applyStyles('dark', {
+        fill: STYLES.dark.mask,
+      }),
     },
   },
 }));

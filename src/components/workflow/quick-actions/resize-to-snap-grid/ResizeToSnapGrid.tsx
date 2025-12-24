@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { IconButton, Tooltip } from '@mui/material';
 
-import Grid4x4Icon from '@mui/icons-material/Grid4x4';
+import Grid4x4Icon from '@mui/icons-material/Grid4x4Rounded';
 
 import * as workflowAct from '_state/features/workflow/slice';
 import type { AppDispatch } from '_state/store';

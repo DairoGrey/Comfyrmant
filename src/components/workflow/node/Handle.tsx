@@ -4,13 +4,13 @@ import { Handle as _Handle, HandleProps, Position, useNodeId } from 'reactflow';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { Box, Stack, styled, Tooltip, Typography } from '@mui/material';
+import { Box, Stack, styled, Tooltip, Typography, useTheme } from '@mui/material';
 
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import CircleIcon from '@mui/icons-material/Circle';
-import HexagonIcon from '@mui/icons-material/Hexagon';
-import InfoOutlined from '@mui/icons-material/InfoOutlined';
-import SquareIcon from '@mui/icons-material/Square';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import CircleIcon from '@mui/icons-material/CircleRounded';
+import HexagonIcon from '@mui/icons-material/HexagonRounded';
+import InfoOutlined from '@mui/icons-material/InfoOutlineRounded';
+import SquareIcon from '@mui/icons-material/SquareRounded';
 
 import * as settingsSel from '_state/features/settings/selector';
 import { WorkflowHandleType } from '_state/features/settings/types';
@@ -29,7 +29,7 @@ const HANDLE_TYPE: Record<WorkflowHandleType, typeof CircleIcon> = {
   [WorkflowHandleType.Hexagon]: HexagonIcon,
 };
 
-const HandleMarker = styled(_Handle)(({ theme }) => ({
+const HandleMarker = styled(_Handle, { name: 'HandleMarker' })(({ theme }) => ({
   '&.react-flow__handle': {
     display: 'flex',
     fontSize: theme.typography.fontSize,
@@ -77,6 +77,7 @@ type InputProps = {
 
 export const Input: FC<InputProps> = ({ input, isConnectable }) => {
   const colorMode = useColorMode();
+  const theme = useTheme();
 
   const nodeId = useNodeId();
 
@@ -96,7 +97,7 @@ export const Input: FC<InputProps> = ({ input, isConnectable }) => {
       position={Position.Left}
       isConnectable={isConnectable}
       label={input.name}
-      color={colorByType(input.type, colorMode)}
+      color={colorByType(input.type, theme, colorMode)}
     >
       {!isUndefined(defaultValue) && !isConnected && (
         <Tooltip title={String(defaultValue) as React.ReactNode} placement="right">
@@ -115,6 +116,7 @@ type OutputProps = {
 
 export const Output: FC<OutputProps> = ({ output, isConnectable }) => {
   const colorMode = useColorMode();
+  const theme = useTheme();
 
   return (
     <Handle
@@ -123,7 +125,7 @@ export const Output: FC<OutputProps> = ({ output, isConnectable }) => {
       position={Position.Right}
       isConnectable={isConnectable}
       label={output.name}
-      color={colorByType(output.type, colorMode)}
+      color={colorByType(output.type, theme, colorMode)}
     />
   );
 };

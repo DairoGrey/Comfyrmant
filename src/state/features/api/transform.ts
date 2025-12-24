@@ -10,7 +10,7 @@ export const transformObjectInfo = (apiValue: ObjectInfoApiResponse): NodeTypes 
       ...result,
       [k]: {
         type: v.name,
-        title: v.display_name,
+        title: v.display_name || v.name,
         category: v.category,
         isOutput: v.output_node,
         outputs: v.output.reduce(
@@ -20,7 +20,7 @@ export const transformObjectInfo = (apiValue: ObjectInfoApiResponse): NodeTypes 
               index: i,
               name: v.output_name[i],
               type: type,
-              isList: v.output_is_list[i],
+              isList: v.output_is_list[i] !== null ? true : false,
             } satisfies NodeOutput,
           }),
           {},

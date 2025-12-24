@@ -2,7 +2,7 @@ import { eventChannel } from 'redux-saga';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { getImageView, getQueue } from '_api/index';
-import { default as apiQueries } from '_state/features/api/slice';
+import apiQueries from '_state/features/api/slice';
 
 import { QueueResponse } from '../api/types';
 import * as blobsSaga from '../blobs/saga';

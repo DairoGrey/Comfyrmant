@@ -11,6 +11,7 @@ export const ru_RU: Record<string, string> = {
   'ui.app-bar.widgets.workflow.status-block.executed-prompts': 'Выполнено запросов',
   'ui.app-bar.widgets.workflow.status-block.remaining-queue': 'Очередь запросов',
 
+  'ui.node.context-menu.bypass': 'Игнорировать',
   'ui.node.context-menu.change-color': 'Изменить цвет',
   'ui.node.context-menu.change-color.item.reset-color': 'Сбросить цвет',
   'ui.node.context-menu.convert-input-to-widget': 'Заменить на поле',
@@ -18,6 +19,7 @@ export const ru_RU: Record<string, string> = {
   'ui.node.context-menu.convert-widget-to-input': 'Заменить на пин',
   'ui.node.context-menu.convert-widget-to-input.item': '<colored>{widget}</colored>',
   'ui.node.context-menu.disconnect-all': 'Отключить все',
+  'ui.node.context-menu.keep': 'Учитывать',
 
   'ui.quick-actions.reset-all-colors.tooltip': 'Сбросить все цвета',
   'ui.quick-actions.resize-to-snap-grip.tooltip': 'Выравнить по сетке',

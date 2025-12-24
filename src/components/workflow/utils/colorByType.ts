@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material';
 import {
   blue,
   blueGrey,
@@ -43,7 +44,7 @@ const COLOR_BY_TYPE: Record<ColorMode, Record<string, string>> = {
   },
 };
 
-export const colorByType = (type: string | string[], colorMode: ColorMode) => {
+export const colorByType = (type: string | string[], theme: Theme, colorMode: ColorMode) => {
   if (Array.isArray(type)) {
     return colorMode === ColorMode.Dark ? blueGrey[200] : blueGrey[400];
   }

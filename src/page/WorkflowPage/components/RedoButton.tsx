@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Box, IconButton, Tooltip } from '@mui/material';
 
-import RedoIcon from '@mui/icons-material/Redo';
+import RedoIcon from '@mui/icons-material/RedoRounded';
 
 import * as workflowSel from '_state/features/workflow/selector';
 import * as workflowAct from '_state/features/workflow/slice';

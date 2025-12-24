@@ -3,17 +3,21 @@ import React from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
+import { NodeColor } from '_state/features/workflow/types';
+
 import { ProgressBar } from './ProgressBar';
 
 type Props = {
   id: string;
   title: string;
 
+  nodeColor?: NodeColor;
   tags?: React.ReactNode;
   lockStatus?: React.ReactNode;
+  bypassStatus?: React.ReactNode;
 };
 
-export const Header: FC<Props> = memo(({ id, title, tags, lockStatus }) => {
+export const Header: FC<Props> = memo(({ id, title, nodeColor, tags, lockStatus, bypassStatus }) => {
   return (
     <>
       <Stack position="relative">
@@ -28,7 +32,7 @@ export const Header: FC<Props> = memo(({ id, title, tags, lockStatus }) => {
           flexShrink={0}
         >
           <Stack>
-            <Typography component="span" color="text.secondary" variant="caption" fontSize="8px" whiteSpace="nowrap">
+            <Typography component="span" color="text.secondary" variant="caption" fontSize="10px" whiteSpace="nowrap">
               {id}
             </Typography>
             <Typography component="h6" color="text.primary" variant="subtitle2" whiteSpace="nowrap">
@@ -36,9 +40,12 @@ export const Header: FC<Props> = memo(({ id, title, tags, lockStatus }) => {
             </Typography>
             {tags}
           </Stack>
-          {lockStatus}
+          <Stack direction="row" gap={0.5}>
+            {lockStatus}
+            {bypassStatus}
+          </Stack>
         </Stack>
-        <ProgressBar id={id} />
+        <ProgressBar id={id} nodeColor={nodeColor} />
       </Stack>
     </>
   );
